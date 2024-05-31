@@ -15,19 +15,19 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Check, PenBoxIcon, Trash2Icon, X } from 'lucide-react'
 
 
-export const SelectCategory = ({ onValueChange }) => {
+export const SelectCondition = ({ onValueChange }) => {
           const { fetchedData } = useFetchContext()
           return (
                     <Select onValueChange={onValueChange}>
                               <SelectTrigger>
-                                        <SelectValue placeholder="Select category" />
+                                        <SelectValue placeholder="Select Condition" />
                               </SelectTrigger>
                               <SelectContent>
                                         <SelectGroup>
-                                                  <SelectLabel>Categories</SelectLabel>
+                                                  <SelectLabel>Conditions</SelectLabel>
                                                   {fetchedData && fetchedData.map((item, index) => (
-                                                            <SelectItem value={item.category} key={index}>
-                                                                      {item.category}
+                                                            <SelectItem value={item.condition} key={index}>
+                                                                      {item.condition}
                                                             </SelectItem>
                                                   ))}
                                         </SelectGroup>
@@ -36,49 +36,49 @@ export const SelectCategory = ({ onValueChange }) => {
           )
 }
 
-export const CategoryForm = () => {
-          const [category, setCategory] = useState('')
-          const { refreshfetchedData } = useFetchContext()
+export const ConditionForm = () => {
+          const [condition, setCondition] = useState('')
+          const { refreshFetchedData } = useFetchContext()
           const [isLoading, setIsLoading] = useState(false)
 
-          const handleAddCategory = async (e) => {
+          const handleAddCondition = async (e) => {
                     setIsLoading(true)
                     e.preventDefault()
-                    const addCategory = await useFetch('/categories', { body: { category: category, addedBy: 'Dakoy' }, method: 'POST' })
-                    if (addCategory) {
-                              refreshfetchedData()
-                              setCategory('')
+                    const addCondition = await useFetch('/conditions', { body: { condition: condition, addedBy: 'Dakoy' }, method: 'POST' })
+                    if (addCondition) {
+                              refreshFetchedData()
+                              setCondition('')
                               setIsLoading(false)
                     }
           }
 
           return (
-                    <form className='flex justify-between' onSubmit={handleAddCategory}>
-                              <Input className="w-3/4" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Enter new category" required />
+                    <form className='flex justify-between' onSubmit={handleAddCondition}>
+                              <Input className="w-3/4" value={condition} onChange={(e) => setCondition(e.target.value)} placeholder="Enter new Condition" required />
                               <Button type="submit" isLoading={isLoading} loadingText="Adding">Add</Button>
                     </form>
 
           )
 }
 
-export const Categories = () => {
-          const { fetchedData, refreshFetchData } = useFetchContext()
-          const [onUpdateCategory, setOnUpdateCategory] = useState(null)
-          const [editCategory, setEditCategory] = useState('')
+export const Conditions = () => {
+          const { fetchedData, refreshFetchedData } = useFetchContext()
+          const [onUpdateCondition, setOnUpdateCondition] = useState(null)
+          const [editCondition, setEditCondition] = useState('')
 
           //delete
-          const handleCategoryDelete = async (id) => {
-                    const deleteCategory = await useFetch(`/categories/${id}`, { method: 'DELETE' })
-                    if (deleteCategory) {
-                              refreshFetchData()
+          const handleConditionDelete = async (id) => {
+                    const deleteCondition = await useFetch(`/conditions/${id}`, { method: 'DELETE' })
+                    if (deleteCondition) {
+                              refreshFetchedData()
                     }
           }
           //update
-          const handleCategoryEdit = async (id) => {
-                    const updateCategory = await useFetch(`/categories/${id}`, { body: { category: editCategory }, method: 'PATCH' })
-                    if (updateCategory) {
-                              refreshFetchData()
-                              setOnUpdateCategory(null)
+          const handleConditionEdit = async (id) => {
+                    const updateCondition = await useFetch(`/conditions/${id}`, { body: { Condition: editCondition }, method: 'PATCH' })
+                    if (updateCondition) {
+                              refreshFetchedData()
+                              setOnUpdateCondition(null)
                     }
           }
 
@@ -88,39 +88,39 @@ export const Categories = () => {
                               <TableBody>
                                         <TableRow>
                                                   <TableCell>
-                                                            <CategoryForm />
+                                                            <ConditionForm />
                                                   </TableCell>
                                         </TableRow>
                                         {fetchedData && fetchedData.map((item, index) => (
                                                   <TableRow key={item._id}>
                                                             <TableCell className="flex items-center">
                                                                       {
-                                                                                onUpdateCategory === item._id ?
-                                                                                          <Input defaultValue={item.category} onChange={(e) => setEditCategory(e.target.value)} className="w-3/4" />
+                                                                                onUpdateCondition === item._id ?
+                                                                                          <Input defaultValue={item.condition} onChange={(e) => setEditCondition(e.target.value)} className="w-3/4" />
                                                                                           :
-                                                                                          <span className='text-slate-600'> {item.category}</span>
+                                                                                          <span className='text-slate-600'> {item.condition}</span>
                                                                       }
                                                                       <span className='absolute space-x-2 right-4 inline-flex'>
                                                                                 {
-                                                                                          onUpdateCategory === item._id ?
+                                                                                          onUpdateCondition === item._id ?
                                                                                                     <>
                                                                                                               <X className='text-destructive hover:text-destructive/60'
-                                                                                                                        onClick={() => setOnUpdateCategory(null)} />
-                                                                                                              <Check onClick={() => handleCategoryEdit(item._id)} className='text-blue-500 hover:text-blue-500/60' />
+                                                                                                                        onClick={() => setOnUpdateCondition(null)} />
+                                                                                                              <Check onClick={() => handleConditionEdit(item._id)} className='text-blue-500 hover:text-blue-500/60' />
                                                                                                     </>
                                                                                                     :
                                                                                                     <>
                                                                                                               <PenBoxIcon
-                                                                                                                        onClick={() => setOnUpdateCategory(item._id)}
+                                                                                                                        onClick={() => setOnUpdateCondition(item._id)}
                                                                                                                         className='text-blue-600 hover:text-blue-600/60' />
                                                                                                               <Popover>
                                                                                                                         <PopoverTrigger asChild>
                                                                                                                                   <Trash2Icon className='text-destructive hover:text-destructive/60' />
                                                                                                                         </PopoverTrigger>
                                                                                                                         <PopoverContent className="w-60">
-                                                                                                                                  <p className='text-sm'>Are you sure to delete this category?</p>
+                                                                                                                                  <p className='text-sm'>Are you sure to delete this Condition?</p>
                                                                                                                                   <div className='flex justify-around my-3'>
-                                                                                                                                            <Button variant="destructive" onClick={() => handleCategoryDelete(item._id)}>Confirm</Button>
+                                                                                                                                            <Button variant="destructive" onClick={() => handleConditionDelete(item._id)}>Confirm</Button>
                                                                                                                                             <PopoverClose asChild>
                                                                                                                                                       <Button>Cancel</Button>
                                                                                                                                             </PopoverClose>

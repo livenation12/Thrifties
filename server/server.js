@@ -26,7 +26,6 @@ app.use(errorHandler);
 
 //static images
 app.use('/images/products', express.static(path.join(__dirname, 'public/images/products')));
-
 app.use(env.BASEURL, routes);
 
 

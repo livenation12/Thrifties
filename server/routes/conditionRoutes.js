@@ -1,16 +1,21 @@
-// const express = require('express')
-// const router = express.Router()
+const express = require('express')
 
-// const {
-//         getConditions,
-//         addCondition,
-//         updateCondition
-// } = require('../controllers')
+const {
+        list,
+        addCondition,
+        updateCondition,
+        deleteCondition
+} = require('../controllers/conditionController')
+const { capitalizeProps } = require('../middlewares/formatRequests')
 
-// router.get('/', getConditions)
+const router = express.Router()
 
-// router.post('/', addCondition)
+router.get('/', list)
 
-// router.patch('/:id', updateCondition)
+router.post('/', capitalizeProps(['condition']), addCondition)
 
-// module.exports = router
+router.patch('/:id', updateCondition)
+
+router.delete('/:id', deleteCondition)
+
+module.exports = router

@@ -1,4 +1,3 @@
-const { default: mongoose } = require('mongoose')
 const Category = require('../models/Category')
 const BaseController = require('./baseController')
 

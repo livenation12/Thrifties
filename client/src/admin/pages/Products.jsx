@@ -1,71 +1,74 @@
 //hooks
 import React, { useState } from 'react'
 import useFetch from '@/hooks/useFetch'
-import { CategoryProvider, useCategory } from '@/hooks/useCategory'
+import { FetchProvider } from '@/hooks/useFetchContext'
 
 //components
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Categories } from '../components/Categories'
 import { Input } from '@/components/ui/input'
-import { SelectContent, SelectLabel, SelectTrigger, Select, SelectGroup, SelectValue, SelectItem } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Conditions, SelectCondition } from '../components/Conditions'
+import { Categories, SelectCategory } from '../components/Categories'
 
 export default function Products() {
 
         return (
-                <CategoryProvider>
-                        <div className='grid lg:grid-cols-2 gap-3'>
-                                <div>
-                                        <Card>
-                                                <CardHeader>
-                                                        <CardTitle>
-                                                                Products
-                                                        </CardTitle>
-                                                </CardHeader>
-                                                <CardContent>
-                                                        <ProductForm />
-                                                </CardContent>
-                                        </Card>
-                                </div>
-                                <div>
-                                        <Card>
-                                                <CardHeader>
-                                                        <CardTitle>Lists</CardTitle>
-                                                </CardHeader>
-                                                <CardContent>
-                                                        <Accordion type='single' collapsible>
-                                                                <AccordionItem value="category">
-                                                                        <AccordionTrigger>
-                                                                                Categories
-                                                                        </AccordionTrigger>
-                                                                        <AccordionContent>
-                                                                                <Categories />
-                                                                        </AccordionContent>
-                                                                </AccordionItem>
-                                                                <AccordionItem value="condition">
-                                                                        <AccordionTrigger>
-                                                                                Conditions
-                                                                        </AccordionTrigger>
-                                                                        <AccordionContent>
-                                                                                <Categories />
-                                                                        </AccordionContent>
-                                                                </AccordionItem>
+                <div className='grid lg:grid-cols-2 gap-3'>
+                        <div>
+                                <Card>
+                                        <CardHeader>
+                                                <CardTitle>
+                                                        Products
+                                                </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
 
-                                                        </Accordion>
+                                                <ProductForm />
 
-                                                </CardContent>
-                                        </Card>
-                                </div>
+                                        </CardContent>
+                                </Card>
                         </div>
-                </CategoryProvider>
+                        <div>
+                                <Card>
+                                        <CardHeader>
+                                                <CardTitle>Products Descriptions</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                                <Accordion type='single' collapsible>
+                                                        <AccordionItem value="category">
+                                                                <AccordionTrigger>
+                                                                        Categories
+                                                                </AccordionTrigger>
+                                                                <AccordionContent>
+                                                                        <FetchProvider url="categories">
+                                                                                <Categories />
+                                                                        </FetchProvider>
+                                                                </AccordionContent>
+                                                        </AccordionItem>
+                                                        <AccordionItem value="condition">
+                                                                <AccordionTrigger>
+                                                                        Conditions
+                                                                </AccordionTrigger>
+                                                                <AccordionContent>
+                                                                        <FetchProvider url="conditions">
+                                                                                <Conditions />
+                                                                        </FetchProvider>
+                                                                </AccordionContent>
+                                                        </AccordionItem>
+
+                                                </Accordion>
+
+                                        </CardContent>
+                                </Card>
+                        </div>
+                </div>
         )
 }
 
 
 const ProductForm = () => {
-        const [category, setCategory] = useState('')
-        const { categoryList } = useCategory()
+        const [inputData, setInputData] = useState({})
         const [productFiles, setProductFiles] = useState([])
 
         const handleProductAdd = async () => {
@@ -80,27 +83,20 @@ const ProductForm = () => {
         const handleFileChange = (e) => {
                 setProductFiles(Array.from(e.target.files))
         }
+        const onValueChange = (value, field) => {
+                setInputData((prev) => ({
+                        ...prev, [field]: value
+                }))
+        }
 
         return (
                 <form className='flex flex-col space-y-2' onSubmit={handleProductAdd}>
-                        <Select onValueChange={(value) => setCategory(value)}>
-                                <SelectTrigger>
-                                        <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                        <SelectGroup>
-                                                <SelectLabel>
-                                                        Categories
-                                                </SelectLabel>
-                                                <SelectItem value=" ">--Select Category--</SelectItem>
-                                                {
-                                                        categoryList.map((item, index) => (
-                                                                <SelectItem key={index} value={item.category}>{item.category}</SelectItem>
-                                                        ))
-                                                }
-                                        </SelectGroup>
-                                </SelectContent>
-                        </Select>
+                        <FetchProvider url='categories'>
+                                <SelectCategory onValueChange={(value) => onValueChange(value, 'category')} />
+                        </FetchProvider>
+                        <FetchProvider url='conditions'>
+                                <SelectCondition onValueChange={(value) => onValueChange(value, 'condition')} />
+                        </FetchProvider>
                         <Input type="file" onChange={handleFileChange} multiple />
                         <Button type="submit" className="self-end">Add</Button>
                 </form>

@@ -10,9 +10,9 @@ const controller = new ConditionController()
 
 module.exports = {
         list: controller.getAll.bind(controller),
-        addCategory: controller.create.bind(controller),
-        deleteCategory: controller.delete.bind(controller),
-        updateCategory: controller.update.bind(controller)
+        addCondition: controller.create.bind(controller),
+        deleteCondition: controller.delete.bind(controller),
+        updateCondition: controller.update.bind(controller)
 }
 
 

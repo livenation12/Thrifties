@@ -9,7 +9,7 @@ class ProductController extends BaseController {
                 try {
                         const { category, condition } = req.body
                         const { files } = req
-                        const products = await Promise.all(
+                        await Promise.all(
                                 files.map((file) => {
                                         return Product.create({ category, file, condition })
                                 })

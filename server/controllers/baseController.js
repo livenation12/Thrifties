@@ -9,16 +9,25 @@ class BaseController {
         sendSuccess(res, message, data = {}) {
                 return res.status(200).json({ message, data })
         }
-        internalError(res, error) {
-                return res.status(500).json({ message: "Server Error", error: error.message })
+        async hasDuplicate(prop) {
+                try {
+                        const duplicate = await this.model.findOne(prop)
+                        if (duplicate) {
+                                return duplicate
+                        }
+                        return false
+                } catch (error) {
+                        return res.status(500).json({ message: "Server Error", error: error.message })
+                }
         }
+
 
         async getAll(req, res) {
                 try {
                         const items = await this.model.find();
-                        res.json(items);
+                        return res.json(items);
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 
@@ -28,7 +37,7 @@ class BaseController {
                         const item = await this.model.findById(id);
                         res.json(item);
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 
@@ -37,16 +46,16 @@ class BaseController {
                         const item = await this.model.findOne({ prop })
                         res.json(item)
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 
         async create(req, res) {
                 try {
                         const newItem = await this.model.create(req.body);
-                        res.status(201).json(newItem);
+                        res.status(201).json({ data: newItem, message: "Successfully created" });
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 
@@ -54,9 +63,9 @@ class BaseController {
                 try {
                         const id = req.params.id;
                         const updatedItem = await this.model.findByIdAndUpdate(id, req.body, { new: true });
-                        res.json(updatedItem);
+                        res.json({ data: updatedItem, message: "Successfully updated" });
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 
@@ -64,9 +73,9 @@ class BaseController {
                 try {
                         const id = req.params.id;
                         await this.model.findByIdAndDelete(id);
-                        res.sendStatus(204);
+                        return res.json({ message: "Successfully deleted" })
                 } catch (error) {
-                        this.internalError(res)
+                        return res.status(500).json({ message: "Server Error", error: error.message })
                 }
         }
 

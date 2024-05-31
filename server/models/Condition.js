@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema()
-
-
+const Schema = mongoose.Schema
 const conditionSchema = new Schema({
         condition: {
                 type: String,
