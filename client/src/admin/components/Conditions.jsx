@@ -20,7 +20,7 @@ export const SelectCondition = ({ onValueChange }) => {
           return (
                     <Select onValueChange={onValueChange}>
                               <SelectTrigger>
-                                        <SelectValue placeholder="Select Condition" />
+                                        <SelectValue placeholder="Condition" />
                               </SelectTrigger>
                               <SelectContent>
                                         <SelectGroup>
@@ -51,13 +51,11 @@ export const ConditionForm = () => {
                               setIsLoading(false)
                     }
           }
-
           return (
                     <form className='flex justify-between' onSubmit={handleAddCondition}>
                               <Input className="w-3/4" value={condition} onChange={(e) => setCondition(e.target.value)} placeholder="Enter new Condition" required />
                               <Button type="submit" isLoading={isLoading} loadingText="Adding">Add</Button>
                     </form>
-
           )
 }
 
@@ -75,7 +73,7 @@ export const Conditions = () => {
           }
           //update
           const handleConditionEdit = async (id) => {
-                    const updateCondition = await useFetch(`/conditions/${id}`, { body: { Condition: editCondition }, method: 'PATCH' })
+                    const updateCondition = await useFetch(`/conditions/${id}`, { body: { condition: editCondition }, method: 'PATCH' })
                     if (updateCondition) {
                               refreshFetchedData()
                               setOnUpdateCondition(null)

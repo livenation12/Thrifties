@@ -9,7 +9,7 @@ export default function RootLayout() {
                         <div className="max-h-full bg-slate-100 col-span-1">
                                 <SideNav />
                         </div>
-                        <div className="col-span-5 text-slate-200 m-5 admin-content">
+                        <div className="col-span-5 text-slate-200 m-5">
                                 <Outlet />
                         </div>
                 </div>

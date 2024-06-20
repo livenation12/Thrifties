@@ -20,7 +20,7 @@ class UserController extends BaseController {
                         if (!hashPassword) {
                                 return res.status(400).json({ error: 'Error on hashing your password' })
                         }
-                        await User.create({ username, password: hashPassword })
+                        await this.model.create({ username, password: hashPassword })
                         return res.status(200).json({ message: "Successfully created your account!" })
                 } catch (error) {
                         return this.internalError(res, error)

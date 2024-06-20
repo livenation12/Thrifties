@@ -20,7 +20,7 @@ export const SelectCategory = ({ onValueChange }) => {
           return (
                     <Select onValueChange={onValueChange}>
                               <SelectTrigger>
-                                        <SelectValue placeholder="Select category" />
+                                        <SelectValue placeholder="Category" />
                               </SelectTrigger>
                               <SelectContent>
                                         <SelectGroup>
@@ -62,7 +62,7 @@ export const CategoryForm = () => {
 }
 
 export const Categories = () => {
-          const { fetchedData, refreshFetchData } = useFetchContext()
+          const { fetchedData, refreshFetchedData } = useFetchContext()
           const [onUpdateCategory, setOnUpdateCategory] = useState(null)
           const [editCategory, setEditCategory] = useState('')
 
@@ -70,14 +70,14 @@ export const Categories = () => {
           const handleCategoryDelete = async (id) => {
                     const deleteCategory = await useFetch(`/categories/${id}`, { method: 'DELETE' })
                     if (deleteCategory) {
-                              refreshFetchData()
+                              refreshFetchedData()
                     }
           }
           //update
           const handleCategoryEdit = async (id) => {
                     const updateCategory = await useFetch(`/categories/${id}`, { body: { category: editCategory }, method: 'PATCH' })
                     if (updateCategory) {
-                              refreshFetchData()
+                              refreshFetchedData()
                               setOnUpdateCategory(null)
                     }
           }

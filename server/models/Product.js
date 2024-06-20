@@ -15,6 +15,10 @@ const fileUploadSchema = new Schema({
 })
 
 const productSchema = new Schema({
+        price: {
+                type: Number,
+                required: true
+        },
         category: {
                 type: String,
                 required: true,
@@ -23,6 +27,15 @@ const productSchema = new Schema({
                 type: String,
                 required: true
         },
+        size: {
+                type: String,
+                required: true
+        },
+        intendedFor: String,
+        usage: String,
+        brand: String,
+        materialUsed: String,
+        issue: String,
         file: fileUploadSchema
 
 }, { timestamps: true })
