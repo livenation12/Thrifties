@@ -34,7 +34,7 @@ export default async function useFetch(url, { body, method = 'GET', ...requestBo
             if (isPostMethod) {
                 toast({
                     title: "Failed!",
-                    description: response.error
+                    description: response.message,
                 });
             }
             return false;

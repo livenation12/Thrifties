@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { Label } from "./label";
 
 const Input = React.forwardRef(
   ({ className, startIcon, endIcon, ...props }, ref) => {
@@ -9,7 +10,7 @@ const Input = React.forwardRef(
         {startIcon && <span className="absolute left-3 opacity-45">{startIcon}</span>}
         <input
           className={cn(
-            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex shadow-sm h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
             startIcon ? "pl-11" : "",
             endIcon ? "pr-11" : ""
           )}
@@ -22,5 +23,7 @@ const Input = React.forwardRef(
   }
 );
 Input.displayName = "Input";
+
+
 
 export { Input };

@@ -5,8 +5,7 @@ import { FetchProvider, useFetchContext } from '@/hooks/useFetchContext';
 import { useDropzone } from 'react-dropzone';
 
 //icons
-import { UploadIcon } from 'lucide-react'
-import { MessageCircleWarning, Package, PackageOpen } from 'lucide-react';
+import { MessageCircleWarning, Package, PackageOpen, UploadIcon, ShirtIcon } from 'lucide-react';
 
 //components
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 export const ProductsDropZone = ({ onFilesAdded }) => {
           const onDrop = useCallback((acceptedFiles) => {
@@ -33,7 +33,7 @@ export const ProductsDropZone = ({ onFilesAdded }) => {
           return (
                     <div
                               {...getRootProps()}
-                              className={`border-2 relative text-slate-500 border-dashed rounded-lg p-6 text-center transition-colors duration-300 cursor-pointer ${isDragActive ? 'bg-gray-200' : 'bg-white'
+                              className={`border-2 relative text-slate-500 border-dashed rounded-lg p-6 text-center shadow-md transition-colors duration-300 cursor-pointer ${isDragActive ? 'bg-gray-200' : 'bg-white'
                                         }`}
                     >
                               <input {...getInputProps()} />
@@ -53,7 +53,12 @@ export const ProductsDropZone = ({ onFilesAdded }) => {
 };
 
 export const ProductsFilePreview = ({ files, onValueChange }) => {
-
+          const fetchConditions = async () => {
+                    return await useFetch('/conditions', {})
+          }
+          const fetchCategories = async () => {
+                    return await useFetch('/categories', {})
+          }
           return (
                     <div className="mt-4 grid grid-cols-3 gap-2">
                               {files.length > 0 && (
@@ -71,13 +76,14 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                                                                 <hr />
                                                                       </CardHeader>
                                                                       <CardContent className="grid grid-cols-2 gap-1">
+                                                                                <Input onChange={(e) => onValueChange(e.target.value, "title", index)} className="col-span-2" placeholder="Title" endIcon={<ShirtIcon />} />
                                                                                 <div className='col-span-2'>
-                                                                                          <FetchProvider url="categories">
+                                                                                          <FetchProvider request={fetchCategories}>
                                                                                                     <SelectCategory onValueChange={(value) => onValueChange(value, "category", index)} />
                                                                                           </FetchProvider>
                                                                                 </div>
                                                                                 <div className='col-span-2'>
-                                                                                          <FetchProvider url="conditions">
+                                                                                          <FetchProvider request={fetchConditions}>
                                                                                                     <SelectCondition onValueChange={(value) => onValueChange(value, "condition", index)} />
                                                                                           </FetchProvider>
                                                                                 </div>
@@ -161,7 +167,9 @@ export const ProductUpload = () => {
                               <Dialog open={files.length > 0 ? true : false}>
                                         <DialogContent hasClose={false} className="max-h-[700px] min-w-[80%] overflow-auto">
                                                   <DialogHeader>
-                                                            <div className='inline-flex gap-2'>    <UploadIcon /> <span>Upload Products</span></div>
+                                                            <DialogTitle>
+                                                                      <div className='inline-flex gap-2'>    <UploadIcon /> <span>Upload Products</span></div>
+                                                            </DialogTitle>
                                                   </DialogHeader>
                                                   <ProductsFilePreview files={files} onValueChange={onValueChange} />
                                                   <DialogFooter className="flex justify-between gap-2">

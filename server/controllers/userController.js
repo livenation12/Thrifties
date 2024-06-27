@@ -30,7 +30,7 @@ class UserController extends BaseController {
         async login(req, res) {
                 try {
                         const { username, password } = req.body
-                        const user = await this.getByProp(username)
+                        const user = await this.getSingleByFilter(username)
                         if (!user) {
                                 return res.status(400).json({ error: 'Username does not have match any credentials' })
                         }

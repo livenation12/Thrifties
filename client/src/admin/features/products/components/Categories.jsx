@@ -38,7 +38,7 @@ export const SelectCategory = ({ onValueChange }) => {
 
 export const CategoryForm = () => {
           const [category, setCategory] = useState('')
-          const { refreshfetchedData } = useFetchContext()
+          const { refreshFetchedData } = useFetchContext()
           const [isLoading, setIsLoading] = useState(false)
 
           const handleAddCategory = async (e) => {
@@ -46,7 +46,7 @@ export const CategoryForm = () => {
                     e.preventDefault()
                     const addCategory = await useFetch('/categories', { body: { category: category, addedBy: 'Dakoy' }, method: 'POST' })
                     if (addCategory) {
-                              refreshfetchedData()
+                              refreshFetchedData()
                               setCategory('')
                               setIsLoading(false)
                     }

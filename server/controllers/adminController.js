@@ -15,7 +15,7 @@ class AdminController extends BaseController {
         async login(req, res) {
                 try {
                         const { username, password } = req.body;
-                        const admin = await this.getByProp(username);
+                        const admin = await this.getSingleByFilter(username);
                         if (!admin) {
                                 return res.status(404).json({ message: 'Username does not match any credentials' });
                         }
@@ -33,7 +33,7 @@ class AdminController extends BaseController {
                 try {
                         const { email } = req.body;
                         // Check if admin with the same email already exists
-                        const adminDuplicate = await this.getByProp(email);
+                        const adminDuplicate = await this.getSingleByFilter(email);
                         if (adminDuplicate) {
                                 return res.status(400).json({ message: 'Email already exists!' });
                         }

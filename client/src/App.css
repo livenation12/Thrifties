@@ -51,6 +51,9 @@ body {
         text-decoration: underline;
 }
 
+/* .active.product-link{
+        color: rgb(19, 19, 19);
+} */
 
 .modal-content {
         --tw-bg-opacity: 1 !important;

@@ -11,11 +11,11 @@ class ProductController extends BaseController {
                         const products = req.body.products;
 
                         if (!files || files.length === 0) {
-                                return res.status(400).json({ error: 'No files uploaded' });
+                                return res.status(400).json({ message: 'No files uploaded' });
                         }
 
                         if (!products || products.length === 0) {
-                                return res.status(400).json({ error: 'No product data provided' });
+                                return res.status(400).json({ message: 'No product data provided' });
                         }
 
                         const parsedProducts = Array.isArray(products)
@@ -24,6 +24,7 @@ class ProductController extends BaseController {
 
                         const productPromises = parsedProducts.map((product, index) => {
                                 const newProduct = new this.model({
+                                        title: product.title,
                                         category: product.category,
                                         condition: product.condition,
                                         intendedFor: product.gender,
@@ -47,8 +48,7 @@ class ProductController extends BaseController {
                                 return newProduct.save();
                         });
                         await Promise.all(productPromises);
-
-                        res.status(200).json({ message: 'Files and products uploaded successfully' });
+                        res.status(200).json({ message: 'Products uploaded successfully' });
                 } catch (error) {
                         console.error(error);
                         res.status(500).json({ error: 'An error occurred' });
@@ -61,5 +61,7 @@ const controller = new ProductController()
 
 module.exports = {
         add: controller.addProduct.bind(controller),
-        getProducts: controller.getAll.bind(controller)
+        getProducts: controller.getAll.bind(controller),
+        updateProduct: controller.update.bind(controller),
+        filter: controller.getAllByFilter.bind(controller)
 }

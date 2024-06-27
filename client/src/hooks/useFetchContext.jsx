@@ -1,9 +1,8 @@
 import { useContext, createContext, useEffect, useState, useCallback } from "react"
-import useFetch from "./useFetch"
 
 const FetchContext = createContext()
 
-export const FetchProvider = ({ children, url }) => {
+export const FetchProvider = ({ children, request }) => {
         const [fetchedData, setFetchedData] = useState([])
         const [refreshData, setRefreshData] = useState(0)
 
@@ -13,7 +12,7 @@ export const FetchProvider = ({ children, url }) => {
 
         useEffect(() => {
                 const getList = async () => {
-                        const list = await useFetch(`/${url}`, {})
+                        const list = await request()
                         if (list) {
                                 setFetchedData(list)
                         }

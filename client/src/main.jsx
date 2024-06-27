@@ -10,7 +10,12 @@ import { AuthProvider } from './hooks/useAuth'
 import AdminAuth from './admin/pages/AdminAuth'
 import RootLayout from './admin/RootLayout'
 import Dashboard from './admin/pages/Dashboard'
-import Products from './admin/pages/Products'
+import Products from './admin/features/products/Products'
+import ManageProducts from './admin/features/products/ManageProducts'
+import SoldProducts from './admin/features/products/SoldProducts'
+import AvailableProducts, { AvailableProductsLoader } from './admin/features/products/AvailableProducts'
+import ProductDescriptions from './admin/features/products/ProductDescriptions'
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -41,12 +46,32 @@ const router = createBrowserRouter([
       },
       {
         path: "products",
-        element: <Products />
+        element: <Products />,
+        children: [
+          {
+            index: true,
+            element: <ManageProducts />
+          },
+          {
+            path: "sold",
+            element: <SoldProducts />
+          },
+          {
+            path: "available",
+            loader: AvailableProductsLoader,
+            element: <AvailableProducts />
+          },
+          {
+            path: "description",
+            element: <ProductDescriptions />
+          },
+        ]
       },
       {
         path: "sales",
         element: <>sales</>
       },
+
     ]
   },
   {
