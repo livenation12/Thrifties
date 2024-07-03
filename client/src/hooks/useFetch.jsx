@@ -31,19 +31,7 @@ export default async function useFetch(url, { body, method = 'GET', ...requestBo
         const fetchResponse = await fetch(baseUrl + url, fetchOptions);
         const response = await fetchResponse.json();
         if (!fetchResponse.ok) {
-            if (isPostMethod) {
-                toast({
-                    title: "Failed!",
-                    description: response.message,
-                });
-            }
             return false;
-        }
-        if (isPostMethod) {
-            toast({
-                title: 'Success',
-                description: response.message
-            });
         }
         return response;
     } catch (error) {

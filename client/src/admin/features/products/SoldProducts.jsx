@@ -1,21 +1,12 @@
-import useFetch from '@/hooks/useFetch'
-import { FetchProvider } from '@/hooks/useFetchContext'
-import React from 'react'
+import DataTable from "@/components/DataTable";
+import { availableProductsColDef } from "./data/columns";
+import { useProducts } from "@/contexts/ProductProvider";
+
 
 export default function SoldProducts() {
-  const fetchSoldRequests = () => {
-    useFetch('/products/filter', {
-      body: {
-        filter: {
-          status: 'sold'
-        }
-      },
-      method: 'POST'
-    })
-  }
+  const { products } = useProducts()
+  const soldProducts = products.list.filter(product => product.status === "Sold")
   return (
-    <FetchProvider request={fetchSoldRequests}>
-      
-    </FetchProvider >
+    <DataTable columns={availableProductsColDef} data={soldProducts} />
   )
 }

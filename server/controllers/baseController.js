@@ -41,9 +41,9 @@ class BaseController {
                 }
         }
 
-        async getSingleByFilter(filter) {
+        async getSingleByFilter(req, res) {
                 try {
-                        const item = await this.model.findOne({ filter })
+                        const item = await this.model.findOne({ ...req.body.filter })
                         res.json(item)
                 } catch (error) {
                         return res.status(500).json({ message: "Server Error", error: error.message })
@@ -54,7 +54,7 @@ class BaseController {
                 try {
                         const item = await this.model.find({ ...req.body.filter })
                         if (item.length <= 0) {
-                                return res.status(404).json({ message: "No Items Found" })
+                                return res.json({ message: "No Items Found" })
                         }
                         res.json(item)
                 } catch (error) {

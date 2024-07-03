@@ -1,5 +1,6 @@
 import { ArchiveIcon, Check, FileText, HandCoins, Settings } from 'lucide-react'
 
+export const staticProductImageUrl = 'http://localhost:8000/images/products';
 
 export const productLinks = [
           {
@@ -32,4 +33,12 @@ export const productLinks = [
                     bgColor: 'bg-gray-600',
                     icon: FileText
           },
+]
+
+export const productGender = [
+          "Girls",
+          "Boys",
+          "Unisex",
+          "Men",
+          "Women"
 ]

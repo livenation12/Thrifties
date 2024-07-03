@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Product = require('../models/Product')
 const BaseController = require('./baseController')
 
@@ -55,6 +56,45 @@ class ProductController extends BaseController {
                 }
 
         }
+
+        async updateProductStatus(req, res) {
+                const { updateIds, status } = req.body;
+
+                if (!Array.isArray(updateIds)) {
+                        return res.status(400).json({ message: "Id payload must be an array" });
+                }
+
+                // Validate that all provided IDs are valid ObjectIDs
+                for (let id of updateIds) {
+                        if (!mongoose.Types.ObjectId.isValid(id)) {
+                                return res.status(400).json({ message: `Invalid ObjectId: ${id}` });
+                        }
+                }
+
+                try {
+                        // Convert updateIds to ObjectId type using new
+                        const objectIdArray = updateIds.map(id => new mongoose.Types.ObjectId(id));
+
+                        // Find documents with _id in the objectIdArray
+                        const products = await Product.find({ _id: { $in: objectIdArray } });
+
+                        // Check if any products were found
+                        if (products.length === 0) {
+                                return res.status(404).json({ message: "No products found with the provided IDs" });
+                        }
+
+                        // Update the status of the found products
+                        const result = await Product.updateMany(
+                                { _id: { $in: objectIdArray } },
+                                { $set: { status: status } }
+                        );
+
+                        return res.status(200).json({ message: "Products updated successfully", updatedCount: result.nModified });
+                } catch (error) {
+                        console.error("Error updating product status:", error);
+                        return res.status(500).json({ message: "Server Error", error: error.message });
+                }
+        }
 }
 
 const controller = new ProductController()
@@ -63,5 +103,7 @@ module.exports = {
         add: controller.addProduct.bind(controller),
         getProducts: controller.getAll.bind(controller),
         updateProduct: controller.update.bind(controller),
-        filter: controller.getAllByFilter.bind(controller)
+        filter: controller.getAllByFilter.bind(controller),
+        single: controller.getById.bind(controller),
+        updateStatus: controller.updateProductStatus.bind(controller)
 }

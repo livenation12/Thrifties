@@ -4,6 +4,9 @@ import {
           getCoreRowModel,
           getSortedRowModel,
           useReactTable,
+          getFilteredRowModel,
+          getPaginationRowModel,
+
 } from "@tanstack/react-table";
 
 import {
@@ -14,63 +17,111 @@ import {
           TableHeader,
           TableRow,
 } from "@/components/ui/table";
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
-function DataTable({ columns, data }) {
+function DataTable({ columns, data, filterCol, hasPagination, showSelectedRows }) {
           const [sorting, setSorting] = useState([])
+          const [columnFilters, setColumnFilters] = useState([])
+          const [rowSelection, setRowSelection] = useState({})
           const table = useReactTable({
                     data,
                     columns,
                     getCoreRowModel: getCoreRowModel(),
+                    getPaginationRowModel: getPaginationRowModel(),
                     onSortingChange: setSorting,
+                    onColumnFiltersChange: setColumnFilters,
+                    getFilteredRowModel: getFilteredRowModel(),
                     getSortedRowModel: getSortedRowModel(),
+                    onRowSelectionChange: setRowSelection,
                     state: {
-                              sorting
+                              sorting,
+                              columnFilters,
+                              rowSelection
                     }
           });
 
           return (
-
-                    <Table className="bg-slate-200 rounded">
-                              <TableHeader>
-                                        {table.getHeaderGroups().map((headerGroup) => (
-                                                  <TableRow key={headerGroup.id}>
-                                                            {headerGroup.headers.map((header) => (
-                                                                      <TableHead key={header.id}>
-                                                                                {header.isPlaceholder
-                                                                                          ? null
-                                                                                          : flexRender(
-                                                                                                    header.column.columnDef.header,
-                                                                                                    header.getContext()
-                                                                                          )}
-                                                                      </TableHead>
-                                                            ))}
-                                                  </TableRow>
-                                        ))}
-                              </TableHeader>
-                              <TableBody>
-                                        {table.getRowModel().rows?.length ? (
-                                                  table.getRowModel().rows.map((row) => (
-                                                            <TableRow
-                                                                      key={row.id}
-                                                                      data-state={row.getIsSelected() ? "selected" : undefined}
-                                                            >
-                                                                      {row.getVisibleCells().map((cell) => (
-                                                                                <TableCell key={cell.id}>
-                                                                                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                                                </TableCell>
+                    <>
+                              {
+                                        filterCol &&
+                                        <div className="flex items-center my-2 justify-end">
+                                                  <Input
+                                                            placeholder={`Search or filter...`}
+                                                            value={(table.getColumn(filterCol)?.getFilterValue()) ?? ""}
+                                                            onChange={(event) =>
+                                                                      table.getColumn(filterCol)?.setFilterValue(event.target.value)
+                                                            }
+                                                            className="max-w-sm"
+                                                  />
+                                        </div>
+                              }
+                              <Table className="bg-slate-200 rounded">
+                                        <TableHeader>
+                                                  {table.getHeaderGroups().map((headerGroup) => (
+                                                            <TableRow key={headerGroup.id}>
+                                                                      {headerGroup.headers.map((header) => (
+                                                                                <TableHead key={header.id}>
+                                                                                          {header.isPlaceholder
+                                                                                                    ? null
+                                                                                                    : flexRender(
+                                                                                                              header.column.columnDef.header,
+                                                                                                              header.getContext()
+                                                                                                    )}
+                                                                                </TableHead>
                                                                       ))}
                                                             </TableRow>
-                                                  ))
-                                        ) : (
-                                                  <TableRow>
-                                                            <TableCell colSpan={columns.length} className="h-20 text-center">
-                                                                      No results.
-                                                            </TableCell>
-                                                  </TableRow>
-                                        )}
-                              </TableBody>
-                    </Table>
-
+                                                  ))}
+                                        </TableHeader>
+                                        <TableBody>
+                                                  {table.getRowModel().rows?.length ? (
+                                                            table.getRowModel().rows.map((row) => (
+                                                                      <TableRow
+                                                                                key={row.id}
+                                                                                data-state={row.getIsSelected() ? "selected" : undefined}
+                                                                      >
+                                                                                {row.getVisibleCells().map((cell) => (
+                                                                                          <TableCell key={cell.id}>
+                                                                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                                                          </TableCell>
+                                                                                ))}
+                                                                      </TableRow>
+                                                            ))
+                                                  ) : (
+                                                            <TableRow>
+                                                                      <TableCell colSpan={columns.length} className="h-20 text-center">
+                                                                                No results.
+                                                                      </TableCell>
+                                                            </TableRow>
+                                                  )}
+                                        </TableBody>
+                              </Table>
+                              {showSelectedRows    &&
+                                        <div className="my-2 text-sm text-white text-muted-foreground">
+                                                  {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                                                  {table.getFilteredRowModel().rows.length} row(s) selected.
+                                        </div>}
+                              {hasPagination &&
+                                        <div className="flex items-center justify-end space-x-2 py-4">
+                                                  <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.previousPage()}
+                                                            disabled={!table.getCanPreviousPage()}
+                                                  >
+                                                            Previous
+                                                  </Button>
+                                                  <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => table.nextPage()}
+                                                            disabled={!table.getCanNextPage()}
+                                                  >
+                                                            Next
+                                                  </Button>
+                                        </div>
+                              }
+                    </>
           );
 }
 

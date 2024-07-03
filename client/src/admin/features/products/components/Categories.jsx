@@ -1,8 +1,7 @@
 
 //hooks
-import useFetch from '@/hooks/useFetch'
 import React, { useState } from 'react'
-import { useFetchContext } from '@/hooks/useFetchContext'
+import { useSelector } from 'react-redux'
 
 //components
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
@@ -16,7 +15,7 @@ import { Check, PenBoxIcon, Trash2Icon, X } from 'lucide-react'
 
 
 export const SelectCategory = ({ onValueChange }) => {
-          const { fetchedData } = useFetchContext()
+          const { categories, status, error } = useSelector(state => state.categories)
           return (
                     <Select onValueChange={onValueChange}>
                               <SelectTrigger>
@@ -25,7 +24,7 @@ export const SelectCategory = ({ onValueChange }) => {
                               <SelectContent>
                                         <SelectGroup>
                                                   <SelectLabel>Categories</SelectLabel>
-                                                  {fetchedData && fetchedData.map((item, index) => (
+                                                  {categories && categories.map((item, index) => (
                                                             <SelectItem value={item.category} key={index}>
                                                                       {item.category}
                                                             </SelectItem>
@@ -38,18 +37,8 @@ export const SelectCategory = ({ onValueChange }) => {
 
 export const CategoryForm = () => {
           const [category, setCategory] = useState('')
-          const { refreshFetchedData } = useFetchContext()
-          const [isLoading, setIsLoading] = useState(false)
+          const handleAddCategory = async (event) => {
 
-          const handleAddCategory = async (e) => {
-                    setIsLoading(true)
-                    e.preventDefault()
-                    const addCategory = await useFetch('/categories', { body: { category: category, addedBy: 'Dakoy' }, method: 'POST' })
-                    if (addCategory) {
-                              refreshFetchedData()
-                              setCategory('')
-                              setIsLoading(false)
-                    }
           }
 
           return (
@@ -62,25 +51,9 @@ export const CategoryForm = () => {
 }
 
 export const Categories = () => {
-          const { fetchedData, refreshFetchedData } = useFetchContext()
+          const { categories, error, status } = useSelector(state => state.categories)
           const [onUpdateCategory, setOnUpdateCategory] = useState(null)
           const [editCategory, setEditCategory] = useState('')
-
-          //delete
-          const handleCategoryDelete = async (id) => {
-                    const deleteCategory = await useFetch(`/categories/${id}`, { method: 'DELETE' })
-                    if (deleteCategory) {
-                              refreshFetchedData()
-                    }
-          }
-          //update
-          const handleCategoryEdit = async (id) => {
-                    const updateCategory = await useFetch(`/categories/${id}`, { body: { category: editCategory }, method: 'PATCH' })
-                    if (updateCategory) {
-                              refreshFetchedData()
-                              setOnUpdateCategory(null)
-                    }
-          }
 
           return (
 
@@ -91,7 +64,7 @@ export const Categories = () => {
                                                             <CategoryForm />
                                                   </TableCell>
                                         </TableRow>
-                                        {fetchedData && fetchedData.map((item, index) => (
+                                        {categories && categories.map((item, index) => (
                                                   <TableRow key={item._id}>
                                                             <TableCell className="flex items-center">
                                                                       {

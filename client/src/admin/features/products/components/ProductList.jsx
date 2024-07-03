@@ -69,27 +69,11 @@ export default function ProductList({ filters }) {
 
    )
 }
-const ProductDetailsView = ({ product }) => {
+export const ProductDetailsView = ({ product }) => {
    return (
-      <Table className="text-muted-foreground text-sm">
-         <TableBody>
-            <TableRow >
-               <TableHead>Brand: </TableHead> <TableCell>{product.brand}</TableCell>
-            </TableRow>
-            <TableRow>
-               <TableHead>Usage: </TableHead> <TableCell>{product.usage}</TableCell>
-            </TableRow>
-            <TableRow>
-               <TableHead>Material used: </TableHead> <TableCell>{product.materialUsed}</TableCell>
-            </TableRow>
-            <TableRow>
-               <TableHead>Price: </TableHead> <TableCell>₱ {product.price}.00</TableCell>
-            </TableRow>
-            <TableRow>
-               <TableHead>Issue: </TableHead> <TableCell className="text-xs">{product.issue}</TableCell>
-            </TableRow>
-         </TableBody>
-      </Table>
+      <div>
+         <img src="" alt="" />
+      </div>
    )
 }
 
