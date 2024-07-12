@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from './ui/input';
 import { Button } from './ui/button';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 function DataTable({ columns, data, filterCol, hasPagination, showSelectedRows }) {
           const [sorting, setSorting] = useState([])
@@ -96,28 +97,44 @@ function DataTable({ columns, data, filterCol, hasPagination, showSelectedRows }
                                                   )}
                                         </TableBody>
                               </Table>
-                              {showSelectedRows    &&
+                              {showSelectedRows  && table.getFilteredSelectedRowModel().rows.length > 0 &&
                                         <div className="my-2 text-sm text-white text-muted-foreground">
                                                   {table.getFilteredSelectedRowModel().rows.length} of{" "}
                                                   {table.getFilteredRowModel().rows.length} row(s) selected.
                                         </div>}
                               {hasPagination &&
-                                        <div className="flex items-center justify-end space-x-2 py-4">
+                                        <div className="flex items-center justify-end space-x-2">
                                                   <Button
-                                                            variant="outline"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => table.firstPage()}
+                                                            disabled={!table.getCanPreviousPage()}
+                                                  >
+                                                            <ChevronsLeft />
+                                                  </Button>
+                                                  <Button
+                                                            variant="ghost"
                                                             size="sm"
                                                             onClick={() => table.previousPage()}
                                                             disabled={!table.getCanPreviousPage()}
                                                   >
-                                                            Previous
+                                                            <ChevronLeft />
                                                   </Button>
                                                   <Button
-                                                            variant="outline"
+                                                            variant="ghost"
                                                             size="sm"
                                                             onClick={() => table.nextPage()}
                                                             disabled={!table.getCanNextPage()}
                                                   >
-                                                            Next
+                                                            <ChevronRight />
+                                                  </Button>
+                                                  <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => table.lastPage()}
+                                                            disabled={!table.getCanNextPage()}
+                                                  >
+                                                            <ChevronsRight />
                                                   </Button>
                                         </div>
                               }

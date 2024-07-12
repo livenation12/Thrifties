@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import UMartLogo from './../../assets/logo-dark.png'
+import logo from './../../assets/logo.png'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { EyeIcon, EyeOffIcon, HandshakeIcon, LockKeyholeOpenIcon } from 'lucide-react'
@@ -36,7 +36,7 @@ export default function AdminAuth() {
                                 <CardHeader>
                                         <CardTitle className="flex items-center">
 
-                                                <img src={UMartLogo} alt="" className="object-cover h-56 w-56" />
+                                                <img src={logo} alt="" className="object-cover h-56 w-56" />
                                                 <p className='text-5xl mt-3'>Admin</p>
                                         </CardTitle>
                                 </CardHeader>

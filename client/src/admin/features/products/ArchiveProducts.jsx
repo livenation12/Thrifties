@@ -1,12 +1,15 @@
-import DataTable from '@/components/DataTable'
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { availableProductsColDef } from './data/columns'
+import { useProducts } from '@/contexts/ProductProvider'
+import ProductTable from './components/ProductTable'
 
 export default function ArchiveProducts() {
-          const { products, status, error } = useSelector(state => state.products)
-          const archiveProducts = products.filter(product => product.status === "Archive")
+          const { products } = useProducts()
+          const archiveProducts = {
+                    list:products.list.filter(product => product.status === "Archive"),
+                    status: products.status
+          }
           return (
-                    <DataTable columns={availableProductsColDef} data={archiveProducts} />
+                    <ProductTable columns={availableProductsColDef} data={archiveProducts} />
           )
 }

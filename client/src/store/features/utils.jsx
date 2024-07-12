@@ -4,7 +4,7 @@ export const handleAsyncThunk = (builder, asyncThunk) => {
                     // Handle pending state
                     pending: (handler) => {
                               builder.addCase(asyncThunk.pending, (state, action) => {
-                                        state.status = 'loading';
+                                        state.status = statusState.loading;
                                         handler && handler(state, action)
                               });
                               return handleAsyncThunk(builder, asyncThunk); // Return itself for chaining
@@ -12,7 +12,7 @@ export const handleAsyncThunk = (builder, asyncThunk) => {
                     // Handle rejected state
                     rejected: (handler) => {
                               builder.addCase(asyncThunk.rejected, (state, action) => {
-                                        state.status = 'failed';
+                                        state.status = statusState.failed;
                                         state.error = action.error.message;
                                         handler && handler(state, action)
 
@@ -23,9 +23,16 @@ export const handleAsyncThunk = (builder, asyncThunk) => {
                     fulfilled: (handler) => {
                               builder.addCase(asyncThunk.fulfilled, (state, action) => {
                                         handler(state, action); // Custom handler for specific logic
-                                        state.status = 'succeeded';
+                                        state.status = statusState.succeeded;
                               });
                               return handleAsyncThunk(builder, asyncThunk); // Return itself for chaining
                     },
           };
 };
+
+export const statusState = {
+          idle: "idle",
+          loading: "loading",
+          succeeded: "succeeded",
+          failed: "failed"
+}

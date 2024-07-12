@@ -14,10 +14,13 @@ const capitalizeProps = (properties = []) => {
 
 const hashPassword = async (req, res, next) => {
         try {
+                const { password, cpassword } = req.body;
                 if (!password) {
                         return res.status(400).json({ message: "Password is required" });
                 }
-                const { password } = req.body
+                if (password !== cpassword) {
+                        return res.status(400).json({ message: "Passwords do not match" })
+                }
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt)
                 req.body.password = hashedPassword

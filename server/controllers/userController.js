@@ -1,6 +1,7 @@
 
 const User = require('../models/User')
 const BaseController = require('./baseController')
+const bcrypt = require('bcrypt')
 
 class UserController extends BaseController {
         constructor() {
@@ -8,22 +9,15 @@ class UserController extends BaseController {
         }
         async signup(req, res) {
                 try {
-                        const { password, cpassword, username } = req.body
-                        if (password !== cpassword) {
-                                return res.status(400).json({ error: 'Passwords do not match' })
-                        }
+                        const { password, username } = req.body
                         const duplicate = await User.findOne({ username })
                         if (duplicate) {
-                                return res.status(400).json({ error: 'Username is already in use' })
+                                return res.status(400).json({ message: 'Username is already in use' })
                         }
-                        const hashPassword = await bcrypt.hash(password, saltRounds)
-                        if (!hashPassword) {
-                                return res.status(400).json({ error: 'Error on hashing your password' })
-                        }
-                        await this.model.create({ username, password: hashPassword })
-                        return res.status(200).json({ message: "Successfully created your account!" })
+                        const newUser = await this.model.create({ username, password })
+                        return res.status(200).json({ data: newUser.username, message: "Successfully created your account!" })
                 } catch (error) {
-                        return this.internalError(res, error)
+                        return res.status(500).json({ message: "Server Error", error: error.message });
                 }
         }
 
@@ -32,15 +26,15 @@ class UserController extends BaseController {
                         const { username, password } = req.body
                         const user = await this.getSingleByFilter(username)
                         if (!user) {
-                                return res.status(400).json({ error: 'Username does not have match any credentials' })
+                                return res.status(400).json({ message: 'Username does not have match any credentials' })
                         }
                         const match = await bcrypt.compare(password, user.password)
                         if (!match) {
-                                return res.status(400).json({ error: 'Incorrect password' })
+                                return res.status(400).json({ message: 'Incorrect password' })
                         }
                         return res.status(200).json({ data: user.username, message: "Successfully login!" })
                 } catch (error) {
-                        return this.internalError(res, error)
+                        return res.status(500).json({ message: "Server Error", error: error.message });
                 }
         }
 }

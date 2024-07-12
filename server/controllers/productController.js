@@ -48,16 +48,15 @@ class ProductController extends BaseController {
                                 });
                                 return newProduct.save();
                         });
-                        await Promise.all(productPromises);
-                        res.status(200).json({ message: 'Products uploaded successfully' });
+                        const addedProducts = await Promise.all(productPromises);
+                        res.status(200).json(addedProducts);
                 } catch (error) {
                         console.error(error);
                         res.status(500).json({ error: 'An error occurred' });
                 }
-
         }
 
-        async updateProductStatus(req, res) {
+        async updateMultipleStatusById(req, res) {
                 const { updateIds, status } = req.body;
 
                 if (!Array.isArray(updateIds)) {
@@ -89,7 +88,7 @@ class ProductController extends BaseController {
                                 { $set: { status: status } }
                         );
 
-                        return res.status(200).json({ message: "Products updated successfully", updatedCount: result.nModified });
+                        return res.status(200).json(result);
                 } catch (error) {
                         console.error("Error updating product status:", error);
                         return res.status(500).json({ message: "Server Error", error: error.message });
@@ -105,5 +104,5 @@ module.exports = {
         updateProduct: controller.update.bind(controller),
         filter: controller.getAllByFilter.bind(controller),
         single: controller.getById.bind(controller),
-        updateStatus: controller.updateProductStatus.bind(controller)
+        updateMultipleStatusById: controller.updateMultipleStatusById.bind(controller)
 }

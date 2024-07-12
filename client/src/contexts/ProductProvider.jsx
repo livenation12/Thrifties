@@ -12,6 +12,14 @@ export const ProductProvider = ({ children }) => {
           const categories = useSelector(state => state.categories);
           const conditions = useSelector(state => state.conditions);
 
+          const productsData = useMemo(() => ({
+                    products,
+                    categories,
+                    conditions,
+                    groupedProducts: groupProductsByCategory(products.list),
+                    newProducts: newProducts(products.list)
+          }), [products, categories, conditions, dispatch])
+
           useEffect(() => {
                     dispatch(fetchProductsData());
                     dispatch(fetchCategories());
@@ -19,10 +27,43 @@ export const ProductProvider = ({ children }) => {
           }, [dispatch]);
 
           return (
-                    <ProductContext.Provider value={{ products, categories, conditions }}>
+                    <ProductContext.Provider value={productsData}>
                               {children}
                     </ProductContext.Provider>
           );
 };
 
 export const useProducts = () => useContext(ProductContext);
+
+
+const groupProductsByCategory = (products) => {
+          const filterAvailable = products.filter(product => product.status === "Available")
+          const groupedByCategory = filterAvailable.reduce((acc, product) => {
+                    const { category, ...rest } = product;
+                    if (!acc[category]) {
+                              acc[category] = {
+                                        category,
+                                        products: []
+                              };
+                    }
+                    acc[category].products.push({ category, ...rest });
+                    return acc;
+          }, {});
+
+          return Object.values(groupedByCategory);
+};
+
+
+const newProducts = (products) => {
+          // Get the current date
+          const currentDate = new Date();
+
+          // Calculate the date 7 days ago
+          const lastWeekDate = new Date();
+          lastWeekDate.setDate(currentDate.getDate() - 7);
+
+          return products.filter(product => {
+                    // Check if the product is available and created within the last week
+                    return product.status === "Available" && new Date(product.createdAt) >= lastWeekDate;
+          });
+}

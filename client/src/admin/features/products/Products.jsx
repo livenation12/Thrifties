@@ -2,11 +2,9 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import React from 'react'
 import { productLinks } from './data/data'
-import { useSelector } from 'react-redux'
 
 export default function Products() {
-        const { categories } = useSelector(state => state.categories)
-        console.log(categories);
+
         return (
                 <div className='grid lg:grid-cols-4 gap-4 text-black'>
                         <div className='col-span-4 flex flex-wrap gap-2'>

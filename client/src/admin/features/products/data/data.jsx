@@ -42,3 +42,8 @@ export const productGender = [
           "Men",
           "Women"
 ]
+export const productStatus = {
+          available: "Available",
+          sold: "Sold",
+          archive: "Archive"
+}

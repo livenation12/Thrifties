@@ -1,5 +1,5 @@
 import React from 'react'
-import Logo from './../../assets/logo-dark.png'
+import Logo from './../../assets/logo.png'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AreaChartIcon, LayoutDashboardIcon, Package2Icon, User2Icon, Users2Icon } from "lucide-react"
 import { NavLink } from "react-router-dom"
@@ -39,7 +39,7 @@ export default function SideNav() {
                         <TableHeader>
                                 <TableRow>
                                         <TableHead className="flex items-center">
-                                                <img className="h-10 object-cover w-24" src={Logo} alt="" /> <span className="hidden lg:inline">UMart Administrator</span>
+                                                <img className="h-10 object-cover" src={Logo} alt="" /> <span className="hidden lg:inline mx-2">Coralds Administrator</span>
                                         </TableHead>
                                 </TableRow>
                         </TableHeader>

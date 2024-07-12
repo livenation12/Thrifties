@@ -1,6 +1,6 @@
 const express = require('express')
 const { uploadProductFiles } = require('../middlewares/productUpload')
-const { add, getProducts, updateProduct, filter, single, updateStatus } = require('../controllers/productController')
+const { add, getProducts, updateProduct, filter, single, updateMultipleStatusById } = require('../controllers/productController')
 
 const router = express.Router()
 
@@ -15,6 +15,6 @@ router.post('/filter', filter)
 
 router.get('/:id', single)
 
-router.put('/status', updateStatus)
+router.put('/status', updateMultipleStatusById)
 
 module.exports = router

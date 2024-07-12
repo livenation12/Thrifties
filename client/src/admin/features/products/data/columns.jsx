@@ -9,14 +9,11 @@ import {
           DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
-
-
-
 import { Link } from "react-router-dom"
-import { staticProductImageUrl } from "./data"
-import useFetch from "@/hooks/useFetch"
+import { productStatus, staticProductImageUrl } from "./data"
 import { StatusBadge } from "../components/ProductStatus"
-
+import { useDispatch } from "react-redux"
+import { updateProductStatus } from "@/store/features/product/productSlice"
 const selectRowColumn = {
           id: 'select',
           header: ({ table }) => {
@@ -24,22 +21,15 @@ const selectRowColumn = {
                     if (tableData.length === 0) {
                               return ""
                     }
-                    const handleSelectedRowsClick = async (data) => {
-                              const productIds = data.map(({ _id }) => _id);
 
-                              const updateStatus = await useFetch('/products/status', {
-                                        method: "PUT",
-                                        body: {
-                                                  updateIds: productIds,
-                                                  status: "Sold"
-                                        }
-                              });
-
-                              if (updateStatus) {
-                                        alert("Yes");
-                              } else {
-                                        alert("No");
+                    const dispatch = useDispatch()
+                    const handleSelectedRowsClick = (selectedRows) => {
+                              const productIds = selectedRows.map(({ _id }) => _id);
+                              const payload = {
+                                        updateIds: productIds,
+                                        status: "Sold"
                               }
+                              dispatch(updateProductStatus(payload))
                     }
 
 
@@ -111,8 +101,16 @@ const productBaseColDef = [
                     },
                     cell: ({ row }) => {
                               const product = row.original
-                              return (
+                              const dispatch = useDispatch()
+                              const handleChangeStatus = (ids, status) => {
+                                        const payload = {
+                                                  updateIds: ids,
+                                                  status
+                                        }
+                                        dispatch(updateProductStatus(payload))
+                              }
 
+                              return (
                                         <article className="flex justify-between items-center">
                                                   <div className="flex gap-x-2">
                                                             <figure className="min-w-32 min-h-24 max-w-32 max-h-24 rounded relative overflow-hidden">
@@ -121,25 +119,28 @@ const productBaseColDef = [
                                                                                 src={`${staticProductImageUrl}/${product.file.filename}`}
                                                                                 alt={product.title}
                                                                       />
-                                                                      <StatusBadge status={product.status} className="absolute top-0 left-0" />
+                                                                      <StatusBadge status={product.status} className="absolute top-1 left-0" />
                                                             </figure>
-                                                            <div className="flex flex-col gap-y-1 text-muted-foreground text-xs">
+                                                            <div className="flex flex-col gap-y-1 text-xs">
                                                                       <header className="font-semibold text-black text-sm truncate md:overflow-visible md:max-w-none max-w-[200px]">
                                                                                 {product.title}
                                                                       </header>
-                                                                      <span>{product.category}</span>
-                                                                      <span>{product.condition}</span>
+                                                                 
+                                                                      <span className="text-[0.83rem]">{product.category}</span>
+                                                                      <span className="text-muted-foreground">{product.condition} | {product.size}</span>
 
                                                                       <span className="text-red-500 font-semibold text-sm mx-1">₱ {product.price}</span>
                                                             </div>
                                                   </div>
                                                   <div>
-                                                            <Button variant="ghost">
-                                                                      <HandCoins />
-                                                            </Button>
-                                                            <Button variant="ghost" onClick={() => confirm()}>
+                                                            {product.status === productStatus.available &&
+                                                                      <Button variant="ghost" onClick={() => handleChangeStatus([product._id], productStatus.sold)}>
+                                                                                <HandCoins />
+                                                                      </Button>
+                                                            }
+                                                            {product.status === productStatus.available && <Button variant="ghost" onClick={() => handleChangeStatus([product._id], productStatus.archive)}>
                                                                       <ArchiveIcon />
-                                                            </Button>
+                                                            </Button>}
 
                                                             <DropdownMenu>
                                                                       <DropdownMenuTrigger asChild>
@@ -158,13 +159,10 @@ const productBaseColDef = [
                                                                                                     View full details
                                                                                           </DropdownMenuItem>
                                                                                 </Link>
-                                                                                <DropdownMenuItem>
-                                                                                          View full details
-                                                                                </DropdownMenuItem>
                                                                       </DropdownMenuContent>
                                                             </DropdownMenu>
                                                   </div>
-                                        </article>
+                                        </article >
 
                               )
                     }
@@ -178,65 +176,11 @@ export const availableProductsColDef = [
 
 ]
 
+export const soldProductsColDef = [
+          ...productBaseColDef
+]
+
 export const manageProductColDefs = [
-          { ...selectRowColumn },
-          {
-                    accessorKey: 'title',
-                    header: 'Products',
-                    cell: ({ row }) => {
-                              const product = row.original
-                              return (
-
-                                        <article className="flex justify-between items-center">
-                                                  <div className="flex gap-x-2">
-                                                            <figure className="min-w-32 min-h-24 max-w-32 max-h-24 rounded overflow-hidden">
-                                                                      <img
-                                                                                className="object-cover w-full h-full"
-                                                                                src={`${staticProductImageUrl}/${product.file.filename}`}
-                                                                                alt={product.title}
-                                                                      />
-                                                            </figure>
-                                                            <div className="flex flex-col gap-y-1 text-muted-foreground text-xs">
-                                                                      <header className="font-semibold text-black text-sm truncate md:overflow-visible md:max-w-none max-w-[200px]">
-                                                                                {product.title}
-                                                                      </header>
-                                                                      <span>{product.category}</span>
-                                                                      <span>{product.condition}</span>
-                                                                      <span className="text-red-500 font-semibold text-sm mx-1">₱ {product.price}</span>
-                                                            </div>
-                                                  </div>
-                                                  <div>
-                                                            <Button variant="ghost" onClick={() => confirm()}>
-                                                                      <ArchiveIcon />
-                                                            </Button>
-
-                                                            <DropdownMenu>
-                                                                      <DropdownMenuTrigger asChild>
-                                                                                <Button variant="ghost">
-                                                                                          <Ellipsis />
-                                                                                </Button>
-                                                                      </DropdownMenuTrigger>
-                                                                      <DropdownMenuContent align="end">
-                                                                                <DropdownMenuLabel>
-                                                                                          Actions
-                                                                                </DropdownMenuLabel>
-                                                                                <DropdownMenuSeparator />
-
-                                                                                <Link to={`/admin/products/${product._id}`}>
-                                                                                          <DropdownMenuItem>
-                                                                                                    View full details
-                                                                                          </DropdownMenuItem>
-                                                                                </Link>
-                                                                                <DropdownMenuItem>
-                                                                                          View full details
-                                                                                </DropdownMenuItem>
-                                                                      </DropdownMenuContent>
-                                                            </DropdownMenu>
-                                                  </div>
-                                        </article>
-
-                              )
-                    }
-          },
+          ...productBaseColDef,
 ]
 

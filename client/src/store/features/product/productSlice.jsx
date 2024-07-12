@@ -8,11 +8,22 @@ export const fetchProductsData = createAsyncThunk('products/fetchData', async ()
 });
 
 // Async thunk to create a new product
-export const createProduct = createAsyncThunk('products/createData', async (payload) => {
-          return await useFetch('/products', {
+export const createProduct = createAsyncThunk('products/createData', async (payload, { dispatch }) => {
+          const create = await useFetch('/products', {
                     body: payload,
                     method: 'POST'
           });
+          dispatch(fetchProductsData())
+          return create;
+});
+
+export const updateProductStatus = createAsyncThunk('products/updateData', async (payload, { dispatch }) => {
+          const response = await useFetch('/products/status', {
+                    method: "PUT",
+                    body: payload
+          });
+          dispatch(fetchProductsData()); // Trigger refetch after update
+          return response;
 });
 
 const initialState = {
@@ -40,7 +51,14 @@ const productSlice = createSlice({
                               .pending()
                               .rejected()
                               .fulfilled((state, action) => {
-                                        state.list.push(action.payload)
+                                        // state.list = [...state.list, ...action.payload]
+
+                              })
+                    handleAsyncThunk(builder, updateProductStatus)
+                              .pending()
+                              .rejected()
+                              .fulfilled((state, action) => {
+
                               })
           },
 });

@@ -75,7 +75,7 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                         <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "category", index)}>
                                              <option value="">--Select category--</option>
                                              {
-                                                  categories && categories.map((item, index) => (
+                                                  categories && categories.list.map((item, index) => (
                                                        <option key={index} value={item.category}>{item.category}</option>
                                                   ))
                                              }
@@ -83,7 +83,7 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                         <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "condition", index)}>
                                              <option value="">--Select condition--</option>
                                              {
-                                                  conditions && conditions.map((item, index) => (
+                                                  conditions && conditions.list.map((item, index) => (
                                                        <option key={index} value={item.condition}>{item.condition}</option>
                                                   ))
                                              }
@@ -95,7 +95,8 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                                        <option key={index} value={gender}>{gender}</option>
                                                   ))
                                              }
-                                        </select>
+                                        </select>                                        
+                                        <Input onChange={(e) => onValueChange(e.target.value, "size", index)} placeholder="Size" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "brand", index)} placeholder="Brand" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "usage", index)} placeholder="Usage" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "materialUsed", index)} placeholder="Material used" />
@@ -111,8 +112,9 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
 };
 
 export const ProductUpload = () => {
-     const [files, setFiles] = useState([]);
+
      const dispatch = useDispatch()
+     const [files, setFiles] = useState([]);
      const handleFilesAdded = (newFiles) => {
           setFiles((prev) => [...prev, ...newFiles]); //add the selected files on dropzone
      };
@@ -138,7 +140,7 @@ export const ProductUpload = () => {
           }
      };
 
-     console.log(files);
+
      return (
           <>
                <ProductsDropZone onFilesAdded={handleFilesAdded} />

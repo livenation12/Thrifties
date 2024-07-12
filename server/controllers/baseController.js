@@ -41,12 +41,11 @@ class BaseController {
                 }
         }
 
-        async getSingleByFilter(req, res) {
+        async getSingleByFilter(filter) {
                 try {
-                        const item = await this.model.findOne({ ...req.body.filter })
-                        res.json(item)
+                        return await this.model.findOne(filter)
                 } catch (error) {
-                        return res.status(500).json({ message: "Server Error", error: error.message })
+                        return false
                 }
         }
 

@@ -1,12 +1,15 @@
-import DataTable from "@/components/DataTable";
-import { availableProductsColDef } from "./data/columns";
+import { soldProductsColDef } from "./data/columns";
 import { useProducts } from "@/contexts/ProductProvider";
+import ProductTable from "./components/ProductTable";
 
 
 export default function SoldProducts() {
   const { products } = useProducts()
-  const soldProducts = products.list.filter(product => product.status === "Sold")
+  const soldProducts = {
+    list: products.list.filter(product => product.status === "Sold"),
+    status: products.status
+  }
   return (
-    <DataTable columns={availableProductsColDef} data={soldProducts} />
+    <ProductTable columns={soldProductsColDef} data={soldProducts} />
   )
 }
