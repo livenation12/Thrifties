@@ -37,7 +37,6 @@ const productSchema = new Schema({
         },
         addedBy: String,
         intendedFor: String,
-        usage: String,
         brand: String,
         materialUsed: String,
         issue: String,

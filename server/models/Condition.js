@@ -6,10 +6,7 @@ const conditionSchema = new Schema({
                 type: String,
                 required: true
         },
-        addedBy: {
-                type: String,
-                required: true
-        }
+        addedBy: String
 }, { timestamps: true })
 
 const ConditionModel = mongoose.model('conditions', conditionSchema)

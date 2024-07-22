@@ -22,12 +22,12 @@ export default function ProductDescriptions() {
                                         <CardTitle>Item Descriptions</CardTitle>
                               </CardHeader>
                               <CardContent>
-                                        <Accordion type='multiple' className='grid md:grid-cols-2 gap-x-14'>
+                                        <Accordion type='multiple' className='grid md:grid-cols-2 gap-x-14' defaultValue={["category", "condition"]}>
                                                   <AccordionItem value="category">
                                                             <AccordionTrigger>
                                                                       Categories
                                                             </AccordionTrigger>
-                                                            <AccordionContent>
+                                                            <AccordionContent className="max-h-72 overflow-y-auto">
                                                                       <FetchProvider request={fetchCategories}>
                                                                                 <Categories />
                                                                       </FetchProvider>
@@ -37,7 +37,7 @@ export default function ProductDescriptions() {
                                                             <AccordionTrigger>
                                                                       Conditions
                                                             </AccordionTrigger>
-                                                            <AccordionContent>
+                                                            <AccordionContent className="max-h-72 overflow-y-auto">
                                                                       <FetchProvider request={fetchConditions}>
                                                                                 <Conditions />
                                                                       </FetchProvider>

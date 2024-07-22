@@ -9,11 +9,11 @@ import logo from './../../assets/logo.png'
 export default function Auth() {
         const [activeTab, setActiveTab] = useLocalStorage('activeAuthTab', 'login')
         return (
-                <div className='min-h-[100vh] flex flex-col bg-slate-200'>
-                        <div className='z-50 h-[100px] w-full sticky top-0 bg-slate-500 px-20 flex items-center space-x-2'>
+                <div className='min-h-[100vh] flex flex-col justify-center bg-slate-200'>
+                        <div className='z-50 h-[100px] w-full absolute top-0 p-1 bg-slate-500 px-20 lg:hidden flex items-center space-x-2'>
                                 <img src={logo} alt="" className="object-cover h-full rounded" />
                         </div>
-                        <div className='h-[480px] container grid lg:grid-cols-2 justify-center items-center'>
+                        <div className='container grid lg:grid-cols-2 justify-center items-center'>
                                 <div className='hidden lg:flex justify-center items-center'>
 
                                         <img src={logo} alt="" className="object-cover h-72 rounded mx-3" />

@@ -20,6 +20,9 @@ import { Provider } from 'react-redux'
 import store from './store/main'
 import ArchiveProducts from './admin/features/products/ArchiveProducts'
 import { ProductProvider } from './contexts/ProductProvider'
+import Featured from './user/features/Featured'
+import CategorizedProducts from './user/features/CategorizedProducts'
+import NewProducts from './user/features/NewProducts'
 
 const router = createBrowserRouter([
   {
@@ -29,7 +32,20 @@ const router = createBrowserRouter([
         <App />
       </AuthProvider>
     ,
-
+    children: [
+      {
+        index: true,
+        element: <Featured />
+      },
+      {
+        path: 'new',
+        element: <NewProducts />
+      },
+      {
+        path: ':category',
+        element: <CategorizedProducts />
+      }
+    ]
   },
   {
     path: '/auth',
@@ -45,7 +61,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
-        path: 'dashboard'
       },
       {
         path: "products",

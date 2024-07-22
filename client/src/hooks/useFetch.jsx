@@ -1,12 +1,10 @@
-import { toast } from "@/components/ui/use-toast";
-
 export default async function useFetch(url, { body, method = 'GET', ...requestBody }) {
     const baseUrl = 'http://localhost:8000/api';
 
     const defaultRequest = {
         method,
         headers: {
-            // Default headers
+            // Default headers can be added here if needed
         },
     };
 
@@ -30,12 +28,14 @@ export default async function useFetch(url, { body, method = 'GET', ...requestBo
     try {
         const fetchResponse = await fetch(baseUrl + url, fetchOptions);
         const response = await fetchResponse.json();
+
         if (!fetchResponse.ok) {
-            return false;
+            throw new Error(response.message || 'Request failed');
         }
-        return response;
+
+        return { status: true, data: response };
     } catch (error) {
-        console.error('Fetch error:', error);
-        return false;
+        console.error(error);
+        throw new Error(error.message || 'Client error');
     }
 }

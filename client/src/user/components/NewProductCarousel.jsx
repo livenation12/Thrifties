@@ -5,7 +5,7 @@ import ProductCarousel from './ProductCarousel';
 import { statusState } from '@/store/features/utils';
 import { CarouselSkeleton } from '@/components/Skeleton';
 
-export default function NewProducts() {
+export default function NewProductCarousel() {
           const { newProducts, products } = useProducts();
           if (products.status === statusState.loading) {
                     return (

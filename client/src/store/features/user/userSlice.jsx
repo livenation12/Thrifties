@@ -2,36 +2,47 @@ import useFetch from "@/hooks/useFetch";
 import { handleAsyncThunk, statusState } from "../utils";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-
-const initialState = {
-          user: null,
-          status: statusState.idle,
-          error: null
-}
-
-export const userSignup = createAsyncThunk("user/signup", async (payload) => {
+export const userSignup = createAsyncThunk("users/signup", async (payload) => {
           return await useFetch('/users/signup', {
                     body: payload,
                     method: "POST"
           })
 })
 
-export const userLogin = createAsyncThunk('user/login', async (payload) => {
-          return await useFetch('/users/login', {
-                    method: 'POST',
-                    body: payload
-          })
+export const userLogin = createAsyncThunk('users/login', async (payload) => {
+          try {
+                    const response = await useFetch('/users/login', {
+                              method: 'POST',
+                              body: payload
+                    })
+                    return response
+          } catch (error) {
+                    throw new Error(error.message); // Propagate error for rejection
+          }
 })
+
+const initialState = {
+          user: null,
+          login: {
+                    username: '',
+                    password: ''
+          },
+          status: statusState.idle,
+          error: null
+}
+
 
 const userSlice = createSlice({
           name: "user",
           initialState,
           reducers: {
-                    setUser: (state) => {
-
+                    loginChange: (state, action) => {
+                              //handle inputcahnges here 
+                              const { name, value } = action.payload;
+                              state.login[name] = value;
                     }
           },
-          extraReducers: builder => {
+          extraReducers: (builder) => {
                     handleAsyncThunk(builder, userSignup)
                               .pending()
                               .rejected()
@@ -42,11 +53,10 @@ const userSlice = createSlice({
                               .pending()
                               .rejected()
                               .fulfilled((state, action) => {
-                                        const { data } = action.payload
-                                        state.user = data
+
                               })
           }
 })
 
-
+export const { loginChange } = userSlice.actions;
 export default userSlice.reducer

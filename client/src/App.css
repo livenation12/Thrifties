@@ -43,7 +43,7 @@ body {
 }
 
 
-.active {
+.admin-side-nav.active {
         --tw-text-opacity: 1;
         color: rgb(100 116 139 / var(--tw-text-opacity));
         text-decoration: underline;
@@ -55,8 +55,16 @@ body {
         background-color: rgb(148 163 184 / var(--tw-bg-opacity)) !important;
 }
 
-.category-nav li {
-        @apply hover:underline cursor-pointer
+.category-nav a {
+        @apply no-underline hover:underline
+}
+
+.products-wrapper {
+        @apply grid md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-5 gap-4 min-h-[75vh] h-auto my-4
+}
+
+.products-wrapper .empty-text {
+        @apply text-center col-span-full italic text-muted-foreground self-center
 }
 
 .auth-link {
@@ -65,4 +73,8 @@ body {
 
 .product-heading {
         @apply text-2xl text-start container my-3
+}
+
+.new-link.active {
+        @apply underline
 }

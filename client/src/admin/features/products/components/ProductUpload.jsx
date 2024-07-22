@@ -17,6 +17,7 @@ import { DialogTitle } from '@radix-ui/react-dialog';
 import { createProduct } from '@/store/features/product/productSlice';
 import { productGender } from '../data/data';
 import { useProducts } from '@/contexts/ProductProvider';
+import { useToast } from '@/components/ui/use-toast';
 
 
 
@@ -95,10 +96,9 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                                        <option key={index} value={gender}>{gender}</option>
                                                   ))
                                              }
-                                        </select>                                        
+                                        </select>
                                         <Input onChange={(e) => onValueChange(e.target.value, "size", index)} placeholder="Size" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "brand", index)} placeholder="Brand" />
-                                        <Input onChange={(e) => onValueChange(e.target.value, "usage", index)} placeholder="Usage" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "materialUsed", index)} placeholder="Material used" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "price", index)} name="price" placeholder="Price" type="number" required />
                                         <Textarea onChange={(e) => onValueChange(e.target.value, "issue", index)} placeholder="Place product issue here" />
@@ -112,7 +112,7 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
 };
 
 export const ProductUpload = () => {
-
+     const { toast } = useToast()
      const dispatch = useDispatch()
      const [files, setFiles] = useState([]);
      const handleFilesAdded = (newFiles) => {
@@ -137,6 +137,9 @@ export const ProductUpload = () => {
           const createdProduct = dispatch(createProduct(data));
           if (createdProduct) {
                setFiles([]);
+               toast({
+                    title: "Uploaded successfully"
+               })
           }
      };
 

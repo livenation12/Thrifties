@@ -1,33 +1,43 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/hooks/useAuth'
-import { userLogin } from '@/store/features/user/userSlice'
-import { statusState } from '@/store/features/utils'
+import { useToast } from '@/components/ui/use-toast'
+import useFetch from '@/hooks/useFetch'
 import { EyeIcon, EyeOffIcon, LockIcon, User2Icon } from 'lucide-react'
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function Login() {
+  const { login } = useAuth()
+  const { toast } = useToast()
   const defaultLoginValue = {
     username: '',
     password: ''
   }
   const [loginData, setLoginData] = useState(defaultLoginValue)
   const [isPasswordShown, setIsPasswordShown] = useState(false)
-  const { status, user } = useSelector(state => state.users)
-  console.log(user);
-  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
   const handleLogin = async (e) => {
     e.preventDefault()
-    dispatch(userLogin(loginData))
-  }
-
-  useEffect(() => {
-    if (status === statusState.succeeded) {
-      setLoginData(defaultLoginValue)
+    try {
+      setIsLoading(true)
+      const { status, data, error } = await useFetch('/users/login', {
+        body: loginData,
+        method: "POST"
+      })
+      toast({
+        title: status ? "Logged in" : "Failed",
+        variant: !status ? "destructive" : "",
+        description: error || data.message
+      })
+      if (data) {
+        login(data.data)
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false)
     }
-  }, [status])
-
+  }
   const handleChange = (e) => {
     const { name, value } = e.target
     setLoginData({ ...loginData, [name]: value })
@@ -49,7 +59,7 @@ export default function Login() {
         }
         type={isPasswordShown ? 'text' : 'password'}
         name="password" value={loginData.password} onChange={handleChange} placeholder="Enter password" />
-      <Button type="submit" loading={status === statusState.loading}>Login</Button>
+      <Button type="submit" loading={isLoading}>Login</Button>
     </form>
   )
 }

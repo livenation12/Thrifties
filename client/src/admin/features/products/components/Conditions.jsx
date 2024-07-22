@@ -1,6 +1,5 @@
 
 //hooks
-import useFetch from '@/hooks/useFetch'
 import React, { useState } from 'react'
 import { useFetchContext } from '@/hooks/useFetchContext'
 
@@ -13,6 +12,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 
 //icons 
 import { Check, PenBoxIcon, Trash2Icon, X } from 'lucide-react'
+import { useDispatch } from 'react-redux'
+import { useProducts } from '@/contexts/ProductProvider'
+import { addCondition, deleteConditionById, updateConditionsById } from '@/store/features/product/conditionSlice'
+import { toast, useToast } from '@/components/ui/use-toast'
 
 
 export const SelectCondition = ({ onValueChange }) => {
@@ -37,51 +40,59 @@ export const SelectCondition = ({ onValueChange }) => {
 }
 
 export const ConditionForm = () => {
+          const { toast } = useToast()
+          const dispatch = useDispatch()
           const [condition, setCondition] = useState('')
-          const { refreshFetchedData } = useFetchContext()
-          const [isLoading, setIsLoading] = useState(false)
-
           const handleAddCondition = async (e) => {
-                    setIsLoading(true)
                     e.preventDefault()
-                    const addCondition = await useFetch('/conditions', { body: { condition: condition, addedBy: 'Dakoy' }, method: 'POST' })
-                    if (addCondition) {
-                              refreshFetchedData()
-                              setCondition('')
-                              setIsLoading(false)
+                    try {
+                              const addResponse = await dispatch(addCondition({ condition })).unwrap()
+                              if (addResponse) {
+                                        setCondition('')
+                                        toast({
+                                                  title: addResponse.message
+                                        })
+                              }
+                    } catch (error) {
+                              toast({
+                                        title: error
+                              })
                     }
           }
           return (
                     <form className='flex justify-between' onSubmit={handleAddCondition}>
                               <Input className="w-3/4" value={condition} onChange={(e) => setCondition(e.target.value)} placeholder="Enter new Condition" required />
-                              <Button type="submit" isLoading={isLoading} loadingText="Adding">Add</Button>
+                              <Button type="submit" disabled={condition.length === 0}>Add</Button>
                     </form>
           )
 }
 
 export const Conditions = () => {
-          const { fetchedData, refreshFetchedData } = useFetchContext()
+          const { toast } = useToast()
+          const { conditions } = useProducts()
+          const dispatch = useDispatch()
           const [onUpdateCondition, setOnUpdateCondition] = useState(null)
           const [editCondition, setEditCondition] = useState('')
-
-          //delete
           const handleConditionDelete = async (id) => {
-                    const deleteCondition = await useFetch(`/conditions/${id}`, { method: 'DELETE' })
-                    if (deleteCondition) {
-                              refreshFetchedData()
+                    const deleteResponse = await dispatch(deleteConditionById(id)).unwrap()
+                    if (deleteResponse) {
+                              toast({
+                                        title: deleteResponse.message
+                              })
                     }
           }
-          //update
+
           const handleConditionEdit = async (id) => {
-                    const updateCondition = await useFetch(`/conditions/${id}`, { body: { condition: editCondition }, method: 'PATCH' })
-                    if (updateCondition) {
-                              refreshFetchedData()
+                    const updateResponse = await dispatch(updateConditionsById({ id, condition: editCondition })).unwrap()
+                    if (updateResponse) {
                               setOnUpdateCondition(null)
+                              toast({
+                                        title: updateResponse.message
+                              })
                     }
           }
 
           return (
-
                     <Table className="overflow-auto">
                               <TableBody>
                                         <TableRow>
@@ -89,8 +100,8 @@ export const Conditions = () => {
                                                             <ConditionForm />
                                                   </TableCell>
                                         </TableRow>
-                                        {fetchedData && fetchedData.map((item, index) => (
-                                                  <TableRow key={item._id}>
+                                        {conditions.list && conditions.list.map((item, index) => (
+                                                  <TableRow key={index}>
                                                             <TableCell className="flex items-center">
                                                                       {
                                                                                 onUpdateCondition === item._id ?

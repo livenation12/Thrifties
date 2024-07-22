@@ -84,7 +84,7 @@ class BaseController {
                 try {
                         const id = req.params.id;
                         await this.model.findByIdAndDelete(id);
-                        return res.json({ message: "Successfully deleted" })
+                        return res.json({ message: "Successfully deleted", deletedId: id })
                 } catch (error) {
                         return res.status(500).json({ message: "Server Error", error: error.message })
                 }

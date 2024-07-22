@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Clipboard, SquareGanttChart, ArchiveIcon, ViewIcon, EyeIcon, Ellipsis, HandCoins, EllipsisVertical } from "lucide-react"
+import { ArrowUpDown, Clipboard, SquareGanttChart, ArchiveIcon, ViewIcon, EyeIcon, Ellipsis, HandCoins, EllipsisVertical, RefreshCcw } from "lucide-react"
 import {
           DropdownMenu,
           DropdownMenuContent,
@@ -31,7 +31,6 @@ const selectRowColumn = {
                               }
                               dispatch(updateProductStatus(payload))
                     }
-
 
                     //get selected rows data
                     const selectedRows = table.getSelectedRowModel().rows;
@@ -70,6 +69,10 @@ const selectRowColumn = {
                                                                       </DropdownMenuItem>
                                                                       <DropdownMenuItem>
                                                                                 Archive
+                                                                      </DropdownMenuItem>
+                                                                      <DropdownMenuSeparator />
+                                                                      <DropdownMenuItem className='space-x-2'>
+                                                                                <RefreshCcw className="size-4" /> <span className="self-end">Restore</span>
                                                                       </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                   </DropdownMenu>
@@ -125,7 +128,7 @@ const productBaseColDef = [
                                                                       <header className="font-semibold text-black text-sm truncate md:overflow-visible md:max-w-none max-w-[200px]">
                                                                                 {product.title}
                                                                       </header>
-                                                                 
+
                                                                       <span className="text-[0.83rem]">{product.category}</span>
                                                                       <span className="text-muted-foreground">{product.condition} | {product.size}</span>
 

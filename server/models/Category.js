@@ -7,10 +7,7 @@ const categorySchema = new Schema({
                 type: String,
                 required: true
         },
-        addedBy: {
-                type: String,
-                required: true
-        }
+        addedBy: String
 }, { timestamps: true })
 
 const CategoryModel = mongoose.model('categories', categorySchema)

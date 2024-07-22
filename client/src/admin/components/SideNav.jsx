@@ -2,20 +2,10 @@ import React from 'react'
 import Logo from './../../assets/logo.png'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AreaChartIcon, LayoutDashboardIcon, Package2Icon, User2Icon, Users2Icon } from "lucide-react"
-import { NavLink } from "react-router-dom"
+import { NavLink, Link } from "react-router-dom"
 
 export default function SideNav() {
         const menu = [
-                {
-                        title: 'My Profile',
-                        icon: <User2Icon />,
-                        path: 'profile'
-                },
-                {
-                        title: 'Dashboard',
-                        icon: <LayoutDashboardIcon />,
-                        path: 'dashboard'
-                },
                 {
                         title: 'Products',
                         icon: <Package2Icon />,
@@ -31,6 +21,11 @@ export default function SideNav() {
                         icon: <Users2Icon />,
                         path: 'founders'
                 },
+                {
+                        title: 'My Profile',
+                        icon: <User2Icon />,
+                        path: 'profile'
+                },
         ]
         return (
 
@@ -44,11 +39,19 @@ export default function SideNav() {
                                 </TableRow>
                         </TableHeader>
                         <TableBody>
+                                <TableRow>
+                                        <TableBody>
+                                                <Link className="admin-side-nav flex justify-center mx-5 my-4 md:justify-start hover:text-slate-500" to="">
+                                                        <span><LayoutDashboardIcon /></span>
+                                                        <span className="hidden md:inline mx-2"> Dashboard</span>
+                                                </Link>
+                                        </TableBody>
+                                </TableRow>
                                 {
                                         menu.map((item, index) => (
                                                 <TableRow key={index}>
                                                         <TableCell >
-                                                                <NavLink className="flex justify-center md:justify-start space-x-3 hover:text-slate-500" to={item.path}>
+                                                                <NavLink className="admin-side-nav flex justify-center md:justify-start space-x-3 hover:text-slate-500" to={item.path}>
                                                                         <span className="">{item?.icon}</span><span className="hidden md:inline">{item.title}</span>
                                                                 </NavLink>
                                                         </TableCell>

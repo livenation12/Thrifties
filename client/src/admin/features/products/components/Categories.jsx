@@ -1,7 +1,7 @@
 
 //hooks
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 //components
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 
 //icons 
 import { Check, PenBoxIcon, Trash2Icon, X } from 'lucide-react'
+import { useProducts } from '@/contexts/ProductProvider'
+import { addCategory, deleteCategoryById, updateCategoryById } from '@/store/features/product/categorySlice'
+import { useToast } from '@/components/ui/use-toast'
 
 
 export const SelectCategory = ({ onValueChange }) => {
@@ -34,27 +37,68 @@ export const SelectCategory = ({ onValueChange }) => {
                     </Select>
           )
 }
-
-export const CategoryForm = () => {
+const CategoryForm = () => {
+          const { toast } = useToast()
+          const dispatch = useDispatch()
           const [category, setCategory] = useState('')
-          const handleAddCategory = async (event) => {
+          const handleAddCategory = async (e) => {
+                    e.preventDefault()
+                    try {
+                              const addResponse = await dispatch(addCategory({ category })).unwrap()
+                              if (addResponse) {
+                                        setCategory('')
+                                        toast({
+                                                  title: addResponse.message
+                                        })
+                              }
 
+                    } catch (error) {
+                              toast({
+                                        title: error
+                              })
+                    }
           }
 
           return (
                     <form className='flex justify-between' onSubmit={handleAddCategory}>
                               <Input className="w-3/4" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Enter new category" required />
-                              <Button type="submit" isLoading={isLoading} loadingText="Adding">Add</Button>
+                              <Button type="submit" disabled={category.length === 0}>Add</Button>
                     </form>
 
           )
 }
 
+
 export const Categories = () => {
-          const { categories, error, status } = useSelector(state => state.categories)
+          const { toast } = useToast()
+          const dispatch = useDispatch()
+          const { categories } = useProducts()
           const [onUpdateCategory, setOnUpdateCategory] = useState(null)
           const [editCategory, setEditCategory] = useState('')
+          const handleCategoryDelete = async (id) => {
+                    try {
+                              const updateResponse = await dispatch(deleteCategoryById(id)).unwrap()
+                              if (updateResponse) {
+                                        toast({
+                                                  title: updateResponse.message
+                                        })
+                              }
+                    } catch (error) {
+                              toast({
+                                        title: error
+                              })
+                    }
+          }
 
+          const handleCategoryEdit = async (id) => {
+                    const updateResponse = await dispatch(updateCategoryById({ id, category: editCategory })).unwrap()
+                    if (updateResponse) {
+                              setOnUpdateCategory(null)
+                              toast({
+                                        title: updateResponse.message
+                              })
+                    }
+          }
           return (
 
                     <Table className="overflow-auto">
@@ -64,7 +108,7 @@ export const Categories = () => {
                                                             <CategoryForm />
                                                   </TableCell>
                                         </TableRow>
-                                        {categories && categories.map((item, index) => (
+                                        {categories.list && categories.list.map(item => (
                                                   <TableRow key={item._id}>
                                                             <TableCell className="flex items-center">
                                                                       {
