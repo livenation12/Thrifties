@@ -1,5 +1,5 @@
 // hooks
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { MessageCircleWarning, Package, PackageOpen, UploadIcon, ShirtIcon } fro
 
 // components
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,7 +32,7 @@ export const ProductsDropZone = ({ onFilesAdded }) => {
      }, [onFilesAdded]);
 
      const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
+     const RequiredField = useRef()
      return (
           <div
                {...getRootProps()}
@@ -61,34 +61,43 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                     <>
                          {files.map(({ file, preview }, index) => (
                               <Card key={index}>
-                                   <CardHeader>
+                                   <CardHeader className="flex justify-center items-center">
                                         <a href={preview} target="_blank" rel="noopener noreferrer">
                                              <img
                                                   src={preview}
                                                   alt={file.name}
-                                                  className="w-full h-32 object-cover rounded-lg"
+                                                  className="h-32 object-cover rounded-lg"
                                              />
                                         </a>
                                         <hr />
                                    </CardHeader>
                                    <CardContent className="space-y-1">
-                                        <Input onChange={(e) => onValueChange(e.target.value, "title", index)} placeholder="Title" endIcon={<ShirtIcon />} />
-                                        <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "category", index)}>
-                                             <option value="">--Select category--</option>
-                                             {
-                                                  categories && categories.list.map((item, index) => (
-                                                       <option key={index} value={item.category}>{item.category}</option>
-                                                  ))
-                                             }
-                                        </select>
-                                        <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "condition", index)}>
-                                             <option value="">--Select condition--</option>
-                                             {
-                                                  conditions && conditions.list.map((item, index) => (
-                                                       <option key={index} value={item.condition}>{item.condition}</option>
-                                                  ))
-                                             }
-                                        </select>
+                                        <div className='relative'>
+                                             <span className='text-destructive absolute -left-1 transform -translate-x-full top-1/2 -translate-y-1/2 text-2xl'>*</span>
+                                             <Input onChange={(e) => onValueChange(e.target.value, "title", index)} placeholder="Title" endIcon={<ShirtIcon />} />
+                                        </div>
+                                        <div className='relative'>
+                                             <span className='text-destructive absolute -left-1 transform -translate-x-full top-1/2 -translate-y-1/2 text-2xl'>*</span>
+                                             <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "category", index)}>
+                                                  <option value="">--Select category--</option>
+                                                  {
+                                                       categories && categories.list.map((item, index) => (
+                                                            <option key={index} value={item.category}>{item.category}</option>
+                                                       ))
+                                                  }
+                                             </select>
+                                        </div>
+                                        <div className='relative'>
+                                             <span className='text-destructive absolute -left-1 transform -translate-x-full top-1/2 -translate-y-1/2 text-2xl'>*</span>
+                                             <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "condition", index)}>
+                                                  <option value="">--Select condition--</option>
+                                                  {
+                                                       conditions && conditions.list.map((item, index) => (
+                                                            <option key={index} value={item.condition}>{item.condition}</option>
+                                                       ))
+                                                  }
+                                             </select>
+                                        </div>
                                         <select defaultValue="" className='w-full h-10 rounded p-3 bg-white text-sm text-slate-500' onChange={(e) => onValueChange(e.target.value, "gender", index)}>
                                              <option value="">--Select Gender--</option>
                                              {
@@ -97,10 +106,16 @@ export const ProductsFilePreview = ({ files, onValueChange }) => {
                                                   ))
                                              }
                                         </select>
-                                        <Input onChange={(e) => onValueChange(e.target.value, "size", index)} placeholder="Size" />
+                                        <div className='relative'>
+                                             <span className='text-destructive absolute -left-1 transform -translate-x-full top-1/2 -translate-y-1/2 text-2xl'>*</span>
+                                             <Input onChange={(e) => onValueChange(e.target.value, "size", index)} placeholder="Size" />
+                                        </div>
                                         <Input onChange={(e) => onValueChange(e.target.value, "brand", index)} placeholder="Brand" />
                                         <Input onChange={(e) => onValueChange(e.target.value, "materialUsed", index)} placeholder="Material used" />
-                                        <Input onChange={(e) => onValueChange(e.target.value, "price", index)} name="price" placeholder="Price" type="number" required />
+                                        <div className='relative'>
+                                             <span className='text-destructive absolute -left-1 transform -translate-x-full top-1/2 -translate-y-1/2 text-2xl'>*</span>
+                                             <Input onChange={(e) => onValueChange(e.target.value, "price", index)} name="price" placeholder="Price" type="number" required />
+                                        </div>
                                         <Textarea onChange={(e) => onValueChange(e.target.value, "issue", index)} placeholder="Place product issue here" />
                                    </CardContent >
                               </Card >
@@ -127,7 +142,24 @@ export const ProductUpload = () => {
           );
      };
 
-     const handleProductFileUpload = async () => {
+     const handleProductFileUpload = async (e) => {
+          e.preventDefault()
+          let isValid = true;
+          console.log(files);
+          files.forEach((item) => {
+               if (!item.category || !item.condition || !item.price || !item.title || !item.size) {
+                    isValid = false;
+               }
+          });
+
+          if (!isValid) {
+               toast({
+                    title: "Validation Error",
+                    description: "Please fill in all required fields (category, condition, gender, price).",
+                    variant: "destructive",
+               });
+               return;
+          }
           const data = new FormData();
           files.forEach((item) => {
                data.append('files', item.file);
@@ -155,12 +187,15 @@ export const ProductUpload = () => {
                                         <UploadIcon /> <span>Upload Products</span>
                                    </div>
                               </DialogTitle>
+                              <DialogDescription className="italic">Only supported files are allowed to be uploaded. ex(jpg, jpeg, png)</DialogDescription>
                          </DialogHeader>
-                         <ProductsFilePreview files={files} onValueChange={onValueChange} />
-                         <DialogFooter className="flex justify-between gap-2">
-                              <Button variant="secondary" onClick={() => setFiles([])}>Close</Button>
-                              <Button onClick={handleProductFileUpload}>Upload</Button>
-                         </DialogFooter>
+                         <form onSubmit={handleProductFileUpload}>
+                              <ProductsFilePreview files={files} onValueChange={onValueChange} />
+                              <DialogFooter className="flex justify-between gap-2">
+                                   <Button variant="secondary" type="button" onClick={() => setFiles([])}>Close</Button>
+                                   <Button type="submit">Upload</Button>
+                              </DialogFooter>
+                         </form>
                     </DialogContent>
                </Dialog>
           </>

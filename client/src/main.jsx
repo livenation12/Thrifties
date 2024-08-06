@@ -23,7 +23,8 @@ import { ProductProvider } from './contexts/ProductProvider'
 import Featured from './user/features/Featured'
 import CategorizedProducts from './user/features/CategorizedProducts'
 import NewProducts from './user/features/NewProducts'
-
+import ProductViewer from './user/features/ProductViewer'
+import Bag from './user/features/Bag'
 const router = createBrowserRouter([
   {
     path: '/',
@@ -39,11 +40,27 @@ const router = createBrowserRouter([
       },
       {
         path: 'new',
-        element: <NewProducts />
+        element: <NewProducts />,
+        children: [
+          {
+            path: ':details',
+            element: <ProductViewer />
+          },
+        ]
       },
       {
         path: ':category',
-        element: <CategorizedProducts />
+        element: <CategorizedProducts />,
+        children: [
+          {
+            path: ':details',
+            element: <ProductViewer />
+          },
+        ]
+      },
+      {
+        path: 'bag',
+        element: <Bag />
       }
     ]
   },

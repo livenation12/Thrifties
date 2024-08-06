@@ -3,28 +3,29 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchCategories } from '@/store/features/product/categorySlice';
 import { fetchConditions } from '@/store/features/product/conditionSlice';
 import { fetchProductsData } from '@/store/features/product/productSlice';
-
+import { fetchUserBag } from '@/store/features/product/bagSlice';
+import useLocalStorage from '@/hooks/useLocalStorage';
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
           const dispatch = useDispatch();
-          const products = useSelector(state => state.products);
-          const categories = useSelector(state => state.categories);
-          const conditions = useSelector(state => state.conditions);
-
+          const { products, categories, conditions, bag } = useSelector(state => state);
+          const [userData, setUserData] = useLocalStorage('userData', null)
           const productsData = useMemo(() => ({
                     products,
                     categories,
                     conditions,
+                    bag,
                     groupedProducts: groupProductsByCategory(products.list),
                     newProducts: newProducts(products.list)
-          }), [products, categories, conditions, dispatch])
+          }), [products, categories, conditions, bag, dispatch])
 
           useEffect(() => {
+                    dispatch(fetchUserBag(userData?.userId));
                     dispatch(fetchProductsData());
                     dispatch(fetchCategories());
                     dispatch(fetchConditions());
-          }, [dispatch]);
+          }, [dispatch, userData]);
 
           return (
                     <ProductContext.Provider value={productsData}>

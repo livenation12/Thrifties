@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Clipboard, SquareGanttChart, ArchiveIcon, ViewIcon, EyeIcon, Ellipsis, HandCoins, EllipsisVertical, RefreshCcw } from "lucide-react"
+import { ArchiveIcon, Ellipsis, HandCoins } from "lucide-react"
 import {
           DropdownMenu,
           DropdownMenuContent,
@@ -14,27 +14,14 @@ import { productStatus, staticProductImageUrl } from "./data"
 import { StatusBadge } from "../components/ProductStatus"
 import { useDispatch } from "react-redux"
 import { updateProductStatus } from "@/store/features/product/productSlice"
+
+import TableEllipsisDropdown from "../components/TableEllipsisDropdown"
+
 const selectRowColumn = {
           id: 'select',
           header: ({ table }) => {
-                    const tableData = table.getRowModel().rows
-                    if (tableData.length === 0) {
-                              return ""
-                    }
 
-                    const dispatch = useDispatch()
-                    const handleSelectedRowsClick = (selectedRows) => {
-                              const productIds = selectedRows.map(({ _id }) => _id);
-                              const payload = {
-                                        updateIds: productIds,
-                                        status: "Sold"
-                              }
-                              dispatch(updateProductStatus(payload))
-                    }
 
-                    //get selected rows data
-                    const selectedRows = table.getSelectedRowModel().rows;
-                    const selectedRowsData = selectedRows.map(row => row.original);
                     return (
 
                               <div className="flex w-14 items-center gap-x-3">
@@ -51,32 +38,7 @@ const selectRowColumn = {
                                                   (table.getIsAllPageRowsSelected() ||
                                                             (table.getIsSomePageRowsSelected() && "indeterminate")) &&
 
-                                                  <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                      <Button variant="ghost" size="sm">
-                                                                                <EllipsisVertical size={18} />
-                                                                      </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent>
-                                                                      <DropdownMenuLabel>
-                                                                                Mark as
-                                                                      </DropdownMenuLabel>
-                                                                      <DropdownMenuSeparator />
-                                                                      <DropdownMenuItem
-                                                                                onClick={() => handleSelectedRowsClick(selectedRowsData)}
-                                                                      >
-                                                                                Sold
-                                                                      </DropdownMenuItem>
-                                                                      <DropdownMenuItem>
-                                                                                Archive
-                                                                      </DropdownMenuItem>
-                                                                      <DropdownMenuSeparator />
-                                                                      <DropdownMenuItem className='space-x-2'>
-                                                                                <RefreshCcw className="size-4" /> <span className="self-end">Restore</span>
-                                                                      </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                  </DropdownMenu>
-
+                                                  <TableEllipsisDropdown table={table} />
                                         }
                               </div>
                     )
@@ -103,6 +65,7 @@ const productBaseColDef = [
                               return ""
                     },
                     cell: ({ row }) => {
+
                               const product = row.original
                               const dispatch = useDispatch()
                               const handleChangeStatus = (ids, status) => {
@@ -131,8 +94,8 @@ const productBaseColDef = [
 
                                                                       <span className="text-[0.83rem]">{product.category}</span>
                                                                       <span className="text-muted-foreground">{product.condition} | {product.size}</span>
-
-                                                                      <span className="text-red-500 font-semibold text-sm mx-1">₱ {product.price}</span>
+                                                                      <p><span className="line-through text-muted-foreground">{product.previousPrice}</span><span className="text-red-500 font-semibold text-sm mx-1">₱ {product.price}</span></p>
+                                                                      <span className="text-muted-foreground">{product.totalPercentDiscount}%</span>
                                                             </div>
                                                   </div>
                                                   <div>

@@ -17,6 +17,4 @@ export default function ProductTable({ data, ...props }) {
                               </div>
                     )
           }
-
-
 }

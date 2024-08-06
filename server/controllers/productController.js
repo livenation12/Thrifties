@@ -98,21 +98,122 @@ class ProductController extends BaseController {
                                 { $set: { status: status } }
                         );
 
-                        return res.status(200).json({data: result});
+                        return res.status(200).json({ data: result });
                 } catch (error) {
                         console.error("Error updating product status:", error);
                         return res.status(500).json({ message: "Server Error", error: error.message });
                 }
         }
-}
 
+        async applyDiscount(req, res) {
+                try {
+                        const { discountedProductIds, discountValue, discountType } = req.body;
+
+                        // Validate input data
+                        if (!Array.isArray(discountedProductIds) || discountedProductIds.length === 0) {
+                                return res.status(400).json({ message: 'Invalid product IDs' });
+                        }
+                        if (typeof discountValue !== 'number' || discountValue <= 0) {
+                                return res.status(400).json({ message: 'Invalid discount value' });
+                        }
+                        if (!['Percentage', 'Fixed'].includes(discountType)) {
+                                return res.status(400).json({ message: 'Invalid discount type' });
+                        }
+
+                        // Fetch the products
+                        const products = await this.model.find({ _id: { $in: discountedProductIds } });
+
+                        // Check if products are found
+                        if (products.length === 0) {
+                                return res.status(404).json({ message: 'No products found for the provided IDs' });
+                        }
+
+                        // Iterate over each product to update the price and store the old price in priceHistory
+                        for (const product of products) {
+                                const oldPrice = product.price;
+                                let newPrice;
+
+                                // Calculate the new price based on discount type
+                                if (discountType === "Percentage") {
+                                        newPrice = Math.round(oldPrice - (oldPrice * discountValue / 100));
+                                } else if (discountType === "Fixed") {
+                                        newPrice = oldPrice - discountValue;
+                                }
+
+                                // Ensure the new price isn't negative
+                                newPrice = Math.max(newPrice, 0);
+
+                                // Add old price to priceHistory
+                                product.priceHistory.push({
+                                        price: oldPrice,
+                                        discountType: discountType,
+                                        date: new Date(),
+                                });
+
+                                // Update the product's price
+                                product.price = newPrice;
+
+                                // Save the updated product
+                                await product.save();
+                        }
+
+                        res.status(200).json({ message: 'Products updated successfully' });
+                } catch (error) {
+                        console.error('Error applying discount:', error);
+                        res.status(500).json({ message: 'An error occurred while applying the discount', error: error.message });
+                }
+        }
+
+
+        /**
+         * Retrieves all products from the database and calculates the total
+         * discount for each product. The resulting array of products with the
+         * total discount is then sent as a response.
+         *
+         * @param {object} req - The request object.
+         * @param {object} res - The response object.
+         * @return {Promise<void>} - A promise that resolves when the response is sent.
+         */
+        async getProducts(req, res) {
+                try {
+                        const items = await this.model.find();
+                        const itemsWithTotalDiscount = items.map(item => {
+                                // Get the maximum price from the priceHistory
+                                const maxHistoricalPrice = Math.max(...item.priceHistory.map(history => history.price));
+
+                                // Calculate the total discount saved
+                                const totalSaved = maxHistoricalPrice - item.price;
+
+                                // Calculate the percentage discount applied
+                                const totalPercentDiscount = Math.round((totalSaved / maxHistoricalPrice) * 100);
+
+                                // Add totalSaved, previousPrice, and totalPercentDiscount as new properties
+                                return {
+                                        ...item.toObject(), // Convert Mongoose document to plain object
+                                        totalSaved,
+                                        previousPrice: maxHistoricalPrice,
+                                        totalPercentDiscount
+                                };
+                        });
+
+                        return res.status(200).json(itemsWithTotalDiscount);
+                } catch (error) {
+                        console.error('Error while getting products:', error);
+                        return res.status(500).json({ message: "Server Error", error: error.message });
+                }
+        }
+
+
+
+}
 const controller = new ProductController()
 
 module.exports = {
         add: controller.addProduct.bind(controller),
-        getProducts: controller.getAll.bind(controller),
+        getProducts: controller.getProducts.bind(controller),
         updateProduct: controller.update.bind(controller),
         filter: controller.getAllByFilter.bind(controller),
         single: controller.getById.bind(controller),
-        updateMultipleStatusById: controller.updateMultipleStatusById.bind(controller)
+        updateMultipleStatusById: controller.updateMultipleStatusById.bind(controller),
+        applyDiscount: controller.applyDiscount.bind(controller)
 }

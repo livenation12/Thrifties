@@ -4,12 +4,16 @@ import Login from './Login'
 import Signup from './Signup'
 import useLocalStorage from '@/hooks/useLocalStorage'
 import logo from './../../assets/logo.png'
+import { Button } from '@/components/ui/button'
+import { HomeIcon } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 
 export default function Auth() {
         const [activeTab, setActiveTab] = useLocalStorage('activeAuthTab', 'login')
         return (
                 <div className='min-h-[100vh] flex flex-col justify-center bg-slate-200'>
+                        <Link to={'/'}><Button className='absolute top-3 left-3'> <HomeIcon className='me-3' /> Back to home</Button></Link>
                         <div className='z-50 h-[100px] w-full absolute top-0 p-1 bg-slate-500 px-20 lg:hidden flex items-center space-x-2'>
                                 <img src={logo} alt="" className="object-cover h-full rounded" />
                         </div>

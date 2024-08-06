@@ -4,7 +4,7 @@ const path = require('path')
 
 const { errorHandler } = require('./middlewares/errorHandler');
 const logger = require("./middlewares/logger");
-
+const cookieParser = require('cookie-parser')
 const connectDB = require("./config/db");
 const routes = require('./routes');
 const validateId = require("./middlewares/validateId");
@@ -18,7 +18,11 @@ connectDB()
 
 // Middlewares
 app.use(express.json()); // To parse JSON requests
-app.use(cors()); // Apply CORS middleware
+app.use(cors({
+        origin: 'http://localhost:5173', // Replace with your frontend domain
+        credentials: true
+})); // Apply CORS middleware
+app.use(cookieParser())
 // Error handling middleware
 app.use(logger);
 app.use(validateId)

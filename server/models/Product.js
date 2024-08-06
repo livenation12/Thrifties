@@ -14,6 +14,23 @@ const fileUploadSchema = new Schema({
         size: Number
 })
 
+const priceHistorySchema = new Schema({
+        price: {
+                type: Number,
+                required: true
+        },
+        discountType: {
+                type: String,
+                enum: ["Percentage", "Fixed"],
+                default: "Percentage"
+        },
+        date: {
+                type: Date,
+                default: Date.now
+        },
+
+})
+
 const productSchema = new Schema({
         title: {
                 type: String,
@@ -23,6 +40,7 @@ const productSchema = new Schema({
                 type: Number,
                 required: true
         },
+        priceHistory: [priceHistorySchema],
         category: {
                 type: String,
                 required: true,
@@ -42,9 +60,10 @@ const productSchema = new Schema({
         issue: String,
         status: {
                 type: String,
-                enum: ["Available", "Sold", "Archive"],
+                enum: ["Available", "Sold", "Archive", "Pending"],
                 default: "Available"
         },
+
         file: fileUploadSchema
 
 }, { timestamps: true })

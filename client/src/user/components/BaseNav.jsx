@@ -4,15 +4,16 @@ import logo from './../../assets/logo.png'
 import { Separator } from '@/components/ui/separator';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { Link, NavLink, useNavigate, useParams, } from 'react-router-dom';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, LogOutIcon, ShoppingCart, User } from 'lucide-react';
+import { ChevronDown, LogOutIcon, ShoppingBag, User } from 'lucide-react';
 import { useProducts } from '@/contexts/ProductProvider';
 import { Button } from '@/components/ui/button';
 import { statusState } from '@/store/features/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCallback } from 'react';
-
+import { useSelector } from 'react-redux';
+import { Badge } from '@/components/ui/badge';
 /**
  * BaseNav component renders the navigation bar at the top of the page.
  * It displays the log,o categories, user dropdown, and authentication links.
@@ -26,7 +27,7 @@ export default function BaseNav() {
           const navigate = useNavigate()
           const { categories } = useProducts()
           const { userData, logout } = useAuth()
-
+          const { bag } = useProducts()
           // Define callback functions for handling user authentication and logout
           const handleAuthClick = useCallback((active) => {
                     setActiveTab(active)
@@ -54,7 +55,7 @@ export default function BaseNav() {
                               .slice(0, 4)
                               .map((item, index) => (
                                         <NavLink key={index} to={`${item.category.toLowerCase()}`}>
-                                                  <li className={param.category === item.category.toLowerCase() ? 'underline' : ''}>
+                                                  <li className={param.category === item.category.toLowerCase() ? 'underline text-yellow-600' : ''}>
                                                             {item.category}
                                                   </li>
                                         </NavLink>
@@ -103,9 +104,9 @@ export default function BaseNav() {
                                         <DropdownMenu>
                                                   <DropdownMenuTrigger>
                                                             <Avatar>
-                                                                      <AvatarImage />
-                                                                      <AvatarFallback className="text-slate-600 text-xl">
-                                                                                {userData.charAt(0).toUpperCase()}
+                                                                      <AvatarFallback className="text-slate-600 text-xl relative">
+                                                                                {userData.username.charAt(0).toUpperCase()}
+                                                                                <ChevronDown className='absolute bottom-2 right-0 size-3' />
                                                                       </AvatarFallback>
                                                             </Avatar>
                                                   </DropdownMenuTrigger>
@@ -126,14 +127,25 @@ export default function BaseNav() {
                     }
 
                     return (
-                              <>
+                              <div className='flex gap-1'>
                                         <span className='auth-link' onClick={() => handleAuthClick('signup')}>Signup</span>
-                                        <Separator orientation="vertical" className="text-black" />
+                                        <Separator orientation="vertical" />
                                         <span className='auth-link' onClick={() => handleAuthClick('login')}>Login</span>
-                              </>
+                              </div>
                     )
           }, [handleAuthClick, handleLogoutClick, userData])
 
+          const renderBag = useCallback(() => {
+                    return (
+                              <NavLink to='/bag' className='bag-link relative'>
+                                        {bag.list.length > 0 &&
+                                                  <Badge className="absolute bg-yellow-600 hover:bg-yellow-600/80 -top-3 -right-4">{bag.list.length}</Badge>
+                                        }
+                                        <ShoppingBag className="size-6" />
+                              </NavLink>
+
+                    )
+          }, [bag.list.length, userData])
           return (
                     <>
                               <nav className='sticky top-0 bg-slate-50 z-20'>
@@ -145,8 +157,8 @@ export default function BaseNav() {
                                                             </span>
                                                   </Link>
                                                   {renderCategoryNav()}
-                                                  <div className='mx-10 space-x-3 text-xs md:flex items-center hidden'>
-                                                            {renderUserDropdown()}
+                                                  <div className='mx-10 space-x-5 text-xs md:flex items-center hidden'>
+                                                            {renderBag()}{renderUserDropdown()}
                                                   </div>
                                                   <div className='md:hidden me-5 inline-flex justfiy-center items-center gap-x-3'>
                                                             <DropdownMenu>
@@ -164,6 +176,7 @@ export default function BaseNav() {
                                                             <Button variant="ghost" size="icon" className="rounded-full space-x-1">
                                                                       <User className='size-4' /><ChevronDown className='size-3' />
                                                             </Button>
+
                                                   </div>
                                         </div>
                               </nav>

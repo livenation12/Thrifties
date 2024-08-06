@@ -17,6 +17,12 @@ export const ArchiveBadge = ({ className, ...props }) => {
           )
 }
 
+export const PendingBadge = ({ className, ...props }) => {
+          return (
+                    <Badge  className={`flex justify-center bg-orange-500 hover:bg-orange-500/60 ${className}`} {...props}>Archive</Badge>
+          )
+}
+
 export const StatusBadge = ({ status, ...props }) => {
           switch (status) {
                     case "Available":
@@ -28,8 +34,11 @@ export const StatusBadge = ({ status, ...props }) => {
                     case "Archive":
                               return <ArchiveBadge {...props} />
 
+                    case "Pending":
+                              return <ArchiveBadge {...props} />
+
                     default:
-                              return null
+                              return <AvailableBadge {...props} />
 
           }
 }

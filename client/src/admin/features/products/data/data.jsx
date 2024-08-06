@@ -1,4 +1,4 @@
-import { ArchiveIcon, Check, FileText, HandCoins, Settings } from 'lucide-react'
+import { ArchiveIcon, Check, CheckCheckIcon, FileText, HandCoins, Settings } from 'lucide-react'
 
 export const staticProductImageUrl = 'http://localhost:8000/images/products';
 
@@ -43,7 +43,12 @@ export const productGender = [
           "Women"
 ]
 export const productStatus = {
-          available: "Available",
-          sold: "Sold",
-          archive: "Archive"
+          available: { text: "Available", icon: CheckCheckIcon },
+          sold: { text: "Sold", icon: HandCoins },
+          archive: { text: "Archive", icon: ArchiveIcon },
+}
+
+export const discountTypes = {
+          fixed: "Fixed",
+          percentage: "Percentage",
 }

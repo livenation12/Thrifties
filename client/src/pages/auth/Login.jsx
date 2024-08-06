@@ -5,6 +5,8 @@ import useFetch from '@/hooks/useFetch'
 import { EyeIcon, EyeOffIcon, LockIcon, User2Icon } from 'lucide-react'
 import React, { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useDispatch } from 'react-redux'
+import { fetchUserBag } from '@/store/features/product/bagSlice'
 
 export default function Login() {
   const { login } = useAuth()
@@ -16,24 +18,28 @@ export default function Login() {
   const [loginData, setLoginData] = useState(defaultLoginValue)
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch()
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
       setIsLoading(true)
-      const { status, data, error } = await useFetch('/users/login', {
+      const { status, data } = await useFetch('/users/login', {
         body: loginData,
         method: "POST"
       })
-      toast({
-        title: status ? "Logged in" : "Failed",
-        variant: !status ? "destructive" : "",
-        description: error || data.message
-      })
-      if (data) {
+      if (status) {
+        dispatch(fetchUserBag(data.data.userId))
         login(data.data)
+        toast({
+          title: data.message,
+        })
       }
+
     } catch (error) {
-      console.error(error);
+      toast({
+        variant: "destructive",
+        title: error.message
+      })
     } finally {
       setIsLoading(false)
     }

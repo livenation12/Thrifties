@@ -22,9 +22,22 @@ export const createProduct = createAsyncThunk('products/createData', async (payl
           } catch (error) {
                     return rejectWithValue(error.message)
           }
-
-
 });
+export const applyDiscount = createAsyncThunk('products/applyDiscount', async (payload, { dispatch, rejectWithValue }) => {
+          try {
+                    const discount = await useFetch('/products/discount', {
+                              body: payload,
+                              method: 'PUT'
+                    })
+                    if (discount) {
+                              dispatch(fetchProductsData())
+                              return discount;
+                    }
+          } catch (error) {
+                    return rejectWithValue(error.message)
+
+          }
+})
 
 export const updateProductStatus = createAsyncThunk('products/updateData', async (payload, { dispatch }) => {
           const response = await useFetch('/products/status', {
@@ -64,6 +77,12 @@ const productSlice = createSlice({
 
                               })
                     handleAsyncThunk(builder, updateProductStatus)
+                              .pending()
+                              .rejected()
+                              .fulfilled((state, action) => {
+
+                              })
+                    handleAsyncThunk(builder, applyDiscount)
                               .pending()
                               .rejected()
                               .fulfilled((state, action) => {

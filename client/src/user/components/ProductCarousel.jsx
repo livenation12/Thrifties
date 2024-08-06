@@ -29,9 +29,13 @@ export default function ProductCarousel({ products, ...props }) {
                                                             </div>
                                                   </CarouselItem>
                                         ))}
+
                               </CarouselContent>
-                              <CarouselPrevious />
-                              <CarouselNext />
+                              <div className={products.length > 3 ? "block" : "lg:hidden"}>
+                                        <CarouselPrevious />
+                                        <CarouselNext />
+                              </div>
+
                     </Carousel>
           )
 }

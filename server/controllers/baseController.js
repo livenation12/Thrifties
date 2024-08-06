@@ -1,3 +1,6 @@
+
+const jwt = require('jsonwebtoken');
+
 class BaseController {
         constructor(model) {
                 this.model = model;
@@ -19,6 +22,9 @@ class BaseController {
                 } catch (error) {
                         return res.status(500).json({ message: "Server Error", error: error.message })
                 }
+        }
+        createToken(data) {
+                return jwt.sign({ data }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
         }
 
 
@@ -64,7 +70,7 @@ class BaseController {
         async create(req, res) {
                 try {
                         const newItem = await this.model.create(req.body);
-                        res.status(201).json({ data: newItem, message: "Successfully created" });
+                        res.status(201).json({ data: newItem, message: "Successfully added" });
                 } catch (error) {
                         return res.status(500).json({ message: "Server Error", error: error.message })
                 }
