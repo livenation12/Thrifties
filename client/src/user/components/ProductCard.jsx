@@ -14,8 +14,8 @@ const ProductCard = ({ product }) => {
                                                   src={`${staticProductImageUrl}/${product.file.filename}`}
                                                   alt={product.title}
                                         />
-                                        <div className='mx-4 my-2'>
-                                                  <p className='my-1 truncate'>{product.title}</p>
+                                        <div className='mx-4 my-2 truncate'>
+                                                  <p className='my-1'>{product.title}</p>
                                                   <span className='text-xs text-muted-foreground'>{product.condition} | {product.size}</span>
                                                   <p className='text-sm text-yellow-600'><span className='line-through text-xs text-muted-foreground me-2'>₱ {product.previousPrice}</span>₱ {product.price}</p>
                                         </div>

@@ -49,13 +49,15 @@ const bagSlice = createSlice({
                     clearBag: (state, action) => {
                               state.list = []
                     },
-                    addToTotal: (state, action) => {
-                              state.totalCheckout += action.payload
-                              state.checkoutItemIds.push(action.payload)
+                    addToTotal: (state, action) => {                              
+                              const { price, itemIds } = action.payload
+                              state.totalCheckout += price
+                              state.checkoutItemIds.push(itemIds)
                     },
                     removeToTotal: (state, action) => {
-                              state.totalCheckout -= action.payload
-                              state.checkoutItemIds = state.checkoutItems.filter(item => item !== action.payload)
+                              const { price, itemIds } = action.payload
+                              state.totalCheckout -= price
+                              state.checkoutItemIds = state.checkoutItemIds.filter(item => item !== itemIds)
                     }
 
           },
